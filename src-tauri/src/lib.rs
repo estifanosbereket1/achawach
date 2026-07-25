@@ -1,6 +1,7 @@
 mod db;
 mod library;
 mod player;
+mod stats;
 
 use tauri::menu::MenuBuilder;
 use tauri::tray::TrayIconBuilder;
@@ -60,6 +61,7 @@ pub fn run() {
             player::get_position,
             player::set_shuffle,
             player::set_repeat,
+            stats::record_play,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

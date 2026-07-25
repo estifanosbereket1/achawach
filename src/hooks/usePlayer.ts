@@ -4,6 +4,7 @@ import type { PlayerSnapshot, RepeatMode, Track } from "../types";
 
 const POLL_INTERVAL_MS = 500;
 const END_OF_TRACK_EPSILON_SECS = 0.75;
+const PLAY_RECORD_THRESHOLD = 0.5;
 const REPEAT_CYCLE: RepeatMode[] = ["off", "all", "one"];
 
 export function usePlayer(tracks: Track[]) {
@@ -12,10 +13,38 @@ export function usePlayer(tracks: Track[]) {
   const tracksRef = useRef<Track[]>(tracks);
   tracksRef.current = tracks;
 
-  const applySnapshot = useCallback((next: PlayerSnapshot) => {
-    snapshotRef.current = next;
-    setSnapshot(next);
+  const recordedRef = useRef(false);
+  const lastForRecordRef = useRef<{ trackId: string | null; position: number }>({
+    trackId: null,
+    position: 0,
+  });
+
+  const maybeRecordPlay = useCallback((next: PlayerSnapshot) => {
+    const prev = lastForRecordRef.current;
+    const isNewPlaythrough =
+      next.currentTrackId !== prev.trackId || next.positionSecs < prev.position - 1;
+    if (isNewPlaythrough) {
+      recordedRef.current = false;
+    }
+    lastForRecordRef.current = { trackId: next.currentTrackId, position: next.positionSecs };
+
+    if (recordedRef.current || !next.currentTrackId) return;
+    const track = tracksRef.current.find((t) => t.id === next.currentTrackId);
+    if (!track || track.durationSecs <= 0) return;
+    if (next.positionSecs >= track.durationSecs * PLAY_RECORD_THRESHOLD) {
+      recordedRef.current = true;
+      invoke("record_play", { path: next.currentTrackId }).catch(() => {});
+    }
   }, []);
+
+  const applySnapshot = useCallback(
+    (next: PlayerSnapshot) => {
+      snapshotRef.current = next;
+      setSnapshot(next);
+      maybeRecordPlay(next);
+    },
+    [maybeRecordPlay],
+  );
 
   useEffect(() => {
     const interval = setInterval(async () => {
