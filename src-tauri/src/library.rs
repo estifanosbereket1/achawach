@@ -22,6 +22,9 @@ pub struct Track {
     pub duration_secs: i64,
     pub artwork_path: Option<String>,
     pub track_number: Option<i64>,
+    pub date_added: String,
+    pub play_count: i64,
+    pub last_played: Option<String>,
 }
 
 struct ScannedTrack {
@@ -148,12 +151,16 @@ fn row_to_track(row: &sqlx::sqlite::SqliteRow) -> Result<Track, sqlx::Error> {
         duration_secs: row.try_get("duration_secs")?,
         artwork_path: row.try_get("artwork_path")?,
         track_number: row.try_get("track_number")?,
+        date_added: row.try_get("date_added")?,
+        play_count: row.try_get("play_count")?,
+        last_played: row.try_get("last_played")?,
     })
 }
 
 pub async fn fetch_library(pool: &SqlitePool) -> Result<Vec<Track>, String> {
     let rows = sqlx::query(
-        "SELECT path, title, artist, album, genre, duration_secs, artwork_path, track_number
+        "SELECT path, title, artist, album, genre, duration_secs, artwork_path, track_number,
+                date_added, play_count, last_played
          FROM tracks ORDER BY title COLLATE NOCASE",
     )
     .fetch_all(pool)

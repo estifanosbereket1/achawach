@@ -196,7 +196,6 @@ input[type="range"] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 14px;
-  overflow-y: auto;
 }
 
 .grid-card {
@@ -306,6 +305,46 @@ input[type="range"] {
 .detail-view .track-list {
   flex: 1;
   overflow-y: auto;
+}
+
+.pn-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pn-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pn-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pn-section-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #f0f0f0;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+}
+
+.pn-section-title:hover {
+  color: var(--accent);
+}
+
+.pn-section-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .root-row {

@@ -69,7 +69,13 @@ export function MusicPanel({
       </div>
 
       <div className="library-tab-content">
-        {activeTab === "playnow" && <PlayNowTab />}
+        {activeTab === "playnow" && (
+          <PlayNowTab
+            tracks={tracks}
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+          />
+        )}
         {activeTab === "tracks" && (
           <TracksTab
             tracks={tracks}

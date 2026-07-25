@@ -8,6 +8,9 @@ export interface Track {
   durationSecs: number;
   artworkPath: string | null;
   trackNumber: number | null;
+  dateAdded: string;
+  playCount: number;
+  lastPlayed: string | null;
 }
 
 export type RepeatMode = "off" | "all" | "one";
