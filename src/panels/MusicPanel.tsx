@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { ListMusic, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import { Captions, ListMusic, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
 import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
+import { useLyrics } from "../hooks/useLyrics";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
 import { QueueView } from "../components/QueueView";
+import { LyricsView } from "../components/LyricsView";
 import { SleepTimerMenu } from "../components/SleepTimerMenu";
 import { PlayNowTab } from "./PlayNowTab";
 import { TracksTab } from "./TracksTab";
@@ -81,18 +83,19 @@ export function MusicPanel({
   onImportPlaylist,
 }: MusicPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
-  const [showQueue, setShowQueue] = useState(false);
+  const [overlay, setOverlay] = useState<"none" | "queue" | "lyrics">("none");
   const groups = useLibraryGroups(tracks);
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
 
   function selectTab(tab: LibraryTab) {
-    setShowQueue(false);
+    setOverlay("none");
     setActiveTab(tab);
   }
 
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
   const duration = currentTrack?.durationSecs ?? 0;
+  const { lyrics, loading: lyricsLoading } = useLyrics(currentTrack?.path ?? null);
 
   return (
     <div className="music-panel">
@@ -100,7 +103,7 @@ export function MusicPanel({
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            className={`pill-button ${!showQueue && activeTab === tab.id ? "icon-button-active" : ""}`}
+            className={`pill-button ${overlay === "none" && activeTab === tab.id ? "icon-button-active" : ""}`}
             onClick={() => selectTab(tab.id)}
           >
             {tab.label}
@@ -109,14 +112,22 @@ export function MusicPanel({
       </div>
 
       <div className="library-tab-content">
-        {showQueue ? (
+        {overlay === "queue" ? (
           <QueueView
             tracks={tracks}
             queueTrackIds={snapshot?.queue ?? []}
             currentIndex={snapshot?.currentIndex ?? 0}
             onJumpToIndex={onJumpToIndex}
             onReorder={onReorderQueue}
-            onClose={() => setShowQueue(false)}
+            onClose={() => setOverlay("none")}
+          />
+        ) : overlay === "lyrics" ? (
+          <LyricsView
+            title={currentTrack?.title ?? "Nothing playing"}
+            lyrics={lyrics}
+            loading={lyricsLoading}
+            positionSecs={position}
+            onClose={() => setOverlay("none")}
           />
         ) : (
           <>
@@ -242,12 +253,21 @@ export function MusicPanel({
             {snapshot?.repeat === "one" ? <Repeat1 size={ICON_SIZE} /> : <Repeat size={ICON_SIZE} />}
           </button>
           <button
-            className={`icon-button ${showQueue ? "icon-button-active" : ""}`}
-            onClick={() => setShowQueue((v) => !v)}
+            className={`icon-button ${overlay === "queue" ? "icon-button-active" : ""}`}
+            onClick={() => setOverlay((o) => (o === "queue" ? "none" : "queue"))}
             aria-label="Up next"
             title="Up next"
           >
             <ListMusic size={ICON_SIZE} />
+          </button>
+          <button
+            className={`icon-button ${overlay === "lyrics" ? "icon-button-active" : ""}`}
+            onClick={() => setOverlay((o) => (o === "lyrics" ? "none" : "lyrics"))}
+            disabled={!currentTrack}
+            aria-label="Lyrics"
+            title="Lyrics"
+          >
+            <Captions size={ICON_SIZE} />
           </button>
           <SleepTimerMenu
             remainingSecs={sleepTimerRemainingSecs}
