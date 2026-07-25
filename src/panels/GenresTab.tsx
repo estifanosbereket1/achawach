@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { Shuffle } from "lucide-react";
 import type { GenreGroup } from "../hooks/useLibraryGroups";
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { getGenreIcon } from "../genreIcons";
 import { shuffleArray } from "../utils";
 
-interface GenresTabProps {
+interface GenresTabProps extends PlaylistActions {
   genres: GenreGroup[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
 }
 
-export function GenresTab({ genres, currentTrackId, onPlayList }: GenresTabProps) {
+export function GenresTab({
+  genres,
+  currentTrackId,
+  onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+}: GenresTabProps) {
   const [selected, setSelected] = useState<GenreGroup | null>(null);
   const allTracks = genres.flatMap((g) => g.tracks);
 
@@ -26,6 +33,9 @@ export function GenresTab({ genres, currentTrackId, onPlayList }: GenresTabProps
         currentTrackId={currentTrackId}
         onBack={() => setSelected(null)}
         onPlayList={onPlayList}
+        playlists={playlists}
+        onAddToPlaylist={onAddToPlaylist}
+        onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
       />
     );
   }

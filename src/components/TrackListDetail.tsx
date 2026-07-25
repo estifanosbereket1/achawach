@@ -1,12 +1,12 @@
 import { ArrowLeft, Music, Play, Shuffle } from "lucide-react";
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { Thumbnail } from "./Thumbnail";
 import { TrackRows } from "./TrackRows";
 import { shuffleArray } from "../utils";
 
 type IconComponent = typeof Music;
 
-interface TrackListDetailProps {
+interface TrackListDetailProps extends PlaylistActions {
   title: string;
   subtitle?: string;
   artworkPath: string | null;
@@ -26,6 +26,9 @@ export function TrackListDetail({
   currentTrackId,
   onBack,
   onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
 }: TrackListDetailProps) {
   return (
     <div className="detail-view">
@@ -64,7 +67,14 @@ export function TrackListDetail({
         </div>
       </div>
 
-      <TrackRows tracks={tracks} currentTrackId={currentTrackId} onPlayList={onPlayList} />
+      <TrackRows
+        tracks={tracks}
+        currentTrackId={currentTrackId}
+        onPlayList={onPlayList}
+        playlists={playlists}
+        onAddToPlaylist={onAddToPlaylist}
+        onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+      />
     </div>
   );
 }

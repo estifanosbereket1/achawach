@@ -1,19 +1,26 @@
 import { useMemo, useState } from "react";
 import { Shuffle } from "lucide-react";
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { TrackRows } from "../components/TrackRows";
 import { shuffleArray } from "../utils";
 
 type SortField = "title" | "artist" | "album" | "duration";
 const SORT_FIELDS: SortField[] = ["title", "artist", "album", "duration"];
 
-interface TracksTabProps {
+interface TracksTabProps extends PlaylistActions {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
 }
 
-export function TracksTab({ tracks, currentTrackId, onPlayList }: TracksTabProps) {
+export function TracksTab({
+  tracks,
+  currentTrackId,
+  onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+}: TracksTabProps) {
   const [query, setQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortAsc, setSortAsc] = useState(true);
@@ -95,7 +102,14 @@ export function TracksTab({ tracks, currentTrackId, onPlayList }: TracksTabProps
       {sorted.length === 0 ? (
         <p className="track-list-empty">{tracks.length === 0 ? "No tracks yet." : "No matches."}</p>
       ) : (
-        <TrackRows tracks={sorted} currentTrackId={currentTrackId} onPlayList={onPlayList} />
+        <TrackRows
+          tracks={sorted}
+          currentTrackId={currentTrackId}
+          onPlayList={onPlayList}
+          playlists={playlists}
+          onAddToPlaylist={onAddToPlaylist}
+          onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+        />
       )}
     </div>
   );

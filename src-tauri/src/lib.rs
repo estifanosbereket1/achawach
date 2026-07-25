@@ -1,6 +1,7 @@
 mod db;
 mod library;
 mod player;
+mod playlists;
 mod stats;
 
 use tauri::menu::MenuBuilder;
@@ -63,6 +64,12 @@ pub fn run() {
             player::set_repeat,
             stats::record_play,
             stats::get_monthly_play_counts,
+            playlists::get_playlists,
+            playlists::create_playlist,
+            playlists::rename_playlist,
+            playlists::delete_playlist,
+            playlists::get_playlist_tracks,
+            playlists::set_playlist_tracks,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

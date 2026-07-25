@@ -1,14 +1,22 @@
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { Thumbnail } from "./Thumbnail";
+import { AddToPlaylistMenu } from "./AddToPlaylistMenu";
 import { formatTime } from "../utils";
 
-interface TrackRowsProps {
+interface TrackRowsProps extends PlaylistActions {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
 }
 
-export function TrackRows({ tracks, currentTrackId, onPlayList }: TrackRowsProps) {
+export function TrackRows({
+  tracks,
+  currentTrackId,
+  onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+}: TrackRowsProps) {
   return (
     <div className="track-list">
       {tracks.map((track, index) => (
@@ -25,6 +33,12 @@ export function TrackRows({ tracks, currentTrackId, onPlayList }: TrackRowsProps
             </span>
           </div>
           <span className="track-duration mono">{formatTime(track.durationSecs)}</span>
+          <AddToPlaylistMenu
+            track={track}
+            playlists={playlists}
+            onAddToPlaylist={onAddToPlaylist}
+            onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+          />
         </div>
       ))}
     </div>

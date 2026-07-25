@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { Shuffle } from "lucide-react";
 import type { ArtistGroup } from "../hooks/useLibraryGroups";
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { GridCard } from "../components/GridCard";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { shuffleArray } from "../utils";
 
-interface ArtistsTabProps {
+interface ArtistsTabProps extends PlaylistActions {
   artists: ArtistGroup[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
 }
 
-export function ArtistsTab({ artists, currentTrackId, onPlayList }: ArtistsTabProps) {
+export function ArtistsTab({
+  artists,
+  currentTrackId,
+  onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+}: ArtistsTabProps) {
   const [selected, setSelected] = useState<ArtistGroup | null>(null);
   const allTracks = artists.flatMap((a) => a.tracks);
 
@@ -25,6 +32,9 @@ export function ArtistsTab({ artists, currentTrackId, onPlayList }: ArtistsTabPr
         currentTrackId={currentTrackId}
         onBack={() => setSelected(null)}
         onPlayList={onPlayList}
+        playlists={playlists}
+        onAddToPlaylist={onAddToPlaylist}
+        onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
       />
     );
   }

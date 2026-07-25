@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
-import type { PlayerSnapshot, Track } from "../types";
+import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { Thumbnail } from "../components/Thumbnail";
+import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
 import { PlayNowTab } from "./PlayNowTab";
 import { TracksTab } from "./TracksTab";
 import { ArtistsTab } from "./ArtistsTab";
 import { AlbumsTab } from "./AlbumsTab";
 import { GenresTab } from "./GenresTab";
+import { PlaylistsTab } from "./PlaylistsTab";
 import { formatTime } from "../utils";
 
 const ICON_SIZE = 16;
 
-type LibraryTab = "playnow" | "tracks" | "artists" | "albums" | "genres";
+type LibraryTab = "playnow" | "tracks" | "artists" | "albums" | "genres" | "playlists";
 
 const TABS: { id: LibraryTab; label: string }[] = [
   { id: "playnow", label: "Play Now" },
@@ -20,9 +22,10 @@ const TABS: { id: LibraryTab; label: string }[] = [
   { id: "artists", label: "Artists" },
   { id: "albums", label: "Albums" },
   { id: "genres", label: "Genres" },
+  { id: "playlists", label: "Playlists" },
 ];
 
-interface MusicPanelProps {
+interface MusicPanelProps extends PlaylistActions {
   tracks: Track[];
   snapshot: PlayerSnapshot | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -33,6 +36,11 @@ interface MusicPanelProps {
   onVolumeChange: (volume: number) => void;
   onToggleShuffle: () => void;
   onCycleRepeat: () => void;
+  onCreatePlaylist: (name: string) => Promise<number>;
+  onRenamePlaylist: (playlistId: number, name: string) => void;
+  onDeletePlaylist: (playlistId: number, name: string) => void;
+  getPlaylistTracks: (playlistId: number) => Promise<Track[]>;
+  setPlaylistTracks: (playlistId: number, trackPaths: string[]) => Promise<void>;
 }
 
 export function MusicPanel({
@@ -46,9 +54,18 @@ export function MusicPanel({
   onVolumeChange,
   onToggleShuffle,
   onCycleRepeat,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+  onCreatePlaylist,
+  onRenamePlaylist,
+  onDeletePlaylist,
+  getPlaylistTracks,
+  setPlaylistTracks,
 }: MusicPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
   const groups = useLibraryGroups(tracks);
+  const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
 
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
@@ -74,6 +91,7 @@ export function MusicPanel({
             tracks={tracks}
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
+            {...playlistProps}
           />
         )}
         {activeTab === "tracks" && (
@@ -81,6 +99,7 @@ export function MusicPanel({
             tracks={tracks}
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
+            {...playlistProps}
           />
         )}
         {activeTab === "artists" && (
@@ -88,6 +107,7 @@ export function MusicPanel({
             artists={groups.artists}
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
+            {...playlistProps}
           />
         )}
         {activeTab === "albums" && (
@@ -95,6 +115,7 @@ export function MusicPanel({
             albums={groups.albums}
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
+            {...playlistProps}
           />
         )}
         {activeTab === "genres" && (
@@ -102,6 +123,19 @@ export function MusicPanel({
             genres={groups.genres}
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
+            {...playlistProps}
+          />
+        )}
+        {activeTab === "playlists" && (
+          <PlaylistsTab
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+            onCreatePlaylist={onCreatePlaylist}
+            onRenamePlaylist={onRenamePlaylist}
+            onDeletePlaylist={onDeletePlaylist}
+            getPlaylistTracks={getPlaylistTracks}
+            setPlaylistTracks={setPlaylistTracks}
+            {...playlistProps}
           />
         )}
       </div>
@@ -113,6 +147,14 @@ export function MusicPanel({
             <span className="track-title">{currentTrack?.title ?? "Nothing playing"}</span>
             <span className="track-meta">{currentTrack?.artist ?? ""}</span>
           </div>
+          {currentTrack && (
+            <AddToPlaylistMenu
+              track={currentTrack}
+              playlists={playlists}
+              onAddToPlaylist={onAddToPlaylist}
+              onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+            />
+          )}
         </div>
 
         <div className="transport-progress">

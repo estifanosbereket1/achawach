@@ -13,6 +13,18 @@ export interface Track {
   lastPlayed: string | null;
 }
 
+export interface PlaylistSummary {
+  id: number;
+  name: string;
+  trackCount: number;
+}
+
+export interface PlaylistActions {
+  playlists: PlaylistSummary[];
+  onAddToPlaylist: (playlistId: number, track: Track) => void;
+  onCreatePlaylistWithTrack: (name: string, track: Track) => void;
+}
+
 export type RepeatMode = "off" | "all" | "one";
 
 export interface PlayerSnapshot {

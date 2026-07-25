@@ -5,6 +5,7 @@ import { Settings } from "lucide-react";
 import { useMusicLibrary } from "./hooks/useMusicLibrary";
 import { usePlayer } from "./hooks/usePlayer";
 import { useSettings } from "./hooks/useSettings";
+import { usePlaylists } from "./hooks/usePlaylists";
 import { MusicPanel } from "./panels/MusicPanel";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import "./App.css";
@@ -23,6 +24,7 @@ function App() {
   const library = useMusicLibrary();
   const player = usePlayer(library.tracks);
   const settings = useSettings();
+  const playlists = usePlaylists();
 
   useEffect(() => {
     if (settings.isLoaded) {
@@ -86,6 +88,14 @@ function App() {
                 onVolumeChange={handleVolumeChange}
                 onToggleShuffle={player.toggleShuffle}
                 onCycleRepeat={player.cycleRepeat}
+                playlists={playlists.playlists}
+                onAddToPlaylist={playlists.addTrackToPlaylist}
+                onCreatePlaylistWithTrack={playlists.createPlaylistWithTrack}
+                onCreatePlaylist={playlists.createPlaylist}
+                onRenamePlaylist={playlists.renamePlaylist}
+                onDeletePlaylist={playlists.deletePlaylist}
+                getPlaylistTracks={playlists.getPlaylistTracks}
+                setPlaylistTracks={playlists.setPlaylistTracks}
               />
             ) : (
               <SettingsPanel

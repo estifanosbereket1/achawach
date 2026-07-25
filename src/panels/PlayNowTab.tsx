@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Track } from "../types";
+import type { PlaylistActions, Track } from "../types";
 import { useLibraryGroups, type ArtistGroup, type AlbumGroup } from "../hooks/useLibraryGroups";
 import { useMonthlyPlayCounts } from "../hooks/useMonthlyPlayCounts";
 import { GridCard } from "../components/GridCard";
@@ -28,7 +28,7 @@ const RECENTLY_ADDED_PREVIEW = 6;
 const TRACK_SECTION_PREVIEW = 6;
 const INSTANT_MIX_POOL_SIZE = 30;
 
-interface PlayNowTabProps {
+interface PlayNowTabProps extends PlaylistActions {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -72,11 +72,19 @@ function TrackPreviewSection({ title, tracks, onExpand, onPlayList }: TrackPrevi
   );
 }
 
-export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabProps) {
+export function PlayNowTab({
+  tracks,
+  currentTrackId,
+  onPlayList,
+  playlists,
+  onAddToPlaylist,
+  onCreatePlaylistWithTrack,
+}: PlayNowTabProps) {
   const groups = useLibraryGroups(tracks);
   const monthlyPlayCounts = useMonthlyPlayCounts();
   const [view, setView] = useState<PlayNowView>({ type: "dashboard" });
   const [instantMixPool] = useState<Track[]>(() => shuffleArray(tracks).slice(0, INSTANT_MIX_POOL_SIZE));
+  const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
 
   const popularArtists = useMemo(
     () => [...groups.artists].sort((a, b) => b.totalPlayCount - a.totalPlayCount),
@@ -138,6 +146,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -152,6 +161,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -205,6 +215,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -217,6 +228,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -229,6 +241,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -241,6 +254,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
@@ -253,6 +267,7 @@ export function PlayNowTab({ tracks, currentTrackId, onPlayList }: PlayNowTabPro
         currentTrackId={currentTrackId}
         onBack={goToDashboard}
         onPlayList={onPlayList}
+        {...playlistProps}
       />
     );
   }
