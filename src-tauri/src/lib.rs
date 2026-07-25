@@ -5,6 +5,7 @@ mod notifications;
 mod player;
 mod playlists;
 mod stats;
+mod watcher;
 
 use tauri::menu::MenuBuilder;
 use tauri::tray::TrayIconBuilder;
@@ -25,6 +26,8 @@ pub fn run() {
             let pool = tauri::async_runtime::block_on(db::init_pool(&app_data_dir))
                 .expect("failed to initialize database");
             app.manage(pool);
+
+            app.manage(watcher::WatcherHandle::new());
 
             let menu = MenuBuilder::new(app)
                 .text("show", "Show")
@@ -79,6 +82,7 @@ pub fn run() {
             playlists::export_playlist_m3u,
             playlists::import_playlist_m3u,
             notifications::send_notification,
+            watcher::set_watched_roots,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
