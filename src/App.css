@@ -1,3 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --accent: #ff9f5b;
+  --dock-opacity: 0.55;
+  --surface: #0b0d12;
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --success: #5eead4;
+  --danger: #f87171;
+}
+
 html,
 body,
 #root {
@@ -13,12 +25,23 @@ body,
   box-sizing: border-box;
 }
 
+body {
+  font-family: "Inter", sans-serif;
+  color: #f0f0f0;
+}
+
+.mono {
+  font-family: "JetBrains Mono", monospace;
+}
+
 .orb {
   width: 64px;
   height: 64px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,17 +61,17 @@ body,
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ff9f5b;
+  background: var(--accent);
 }
 
 .dock {
   width: 820px;
   height: 560px;
+  background: rgba(11, 13, 18, var(--dock-opacity, 0.55));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  background: rgba(20, 20, 25, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #f0f0f0;
-  font-family: sans-serif;
 }
 
 .dock .shell-inner {
@@ -70,10 +93,11 @@ body,
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
   color: #f0f0f0;
   font-size: 16px;
+  line-height: 1;
   cursor: pointer;
 }
 
@@ -81,4 +105,8 @@ body,
   text-align: center;
   margin-top: 40%;
   opacity: 0.6;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
 }
