@@ -347,6 +347,48 @@ input[type="range"] {
   gap: 8px;
 }
 
+.track-scroll-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.track-scroll-row .grid-card {
+  flex-shrink: 0;
+  width: 96px;
+}
+
+.stats-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--glass-border);
+  margin-top: 4px;
+}
+
+.stats-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.stats-tile-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stats-tile-label {
+  font-size: 10px;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .root-row {
   display: flex;
   flex-wrap: wrap;

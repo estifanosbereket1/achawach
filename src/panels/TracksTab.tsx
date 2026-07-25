@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Shuffle } from "lucide-react";
 import type { Track } from "../types";
-import { Thumbnail } from "../components/Thumbnail";
-import { formatTime, shuffleArray } from "../utils";
+import { TrackRows } from "../components/TrackRows";
+import { shuffleArray } from "../utils";
 
 type SortField = "title" | "artist" | "album" | "duration";
 const SORT_FIELDS: SortField[] = ["title", "artist", "album", "duration"];
@@ -92,28 +92,11 @@ export function TracksTab({ tracks, currentTrackId, onPlayList }: TracksTabProps
         ))}
       </div>
 
-      <div className="track-list">
-        {sorted.length === 0 ? (
-          <p className="track-list-empty">{tracks.length === 0 ? "No tracks yet." : "No matches."}</p>
-        ) : (
-          sorted.map((track, index) => (
-            <div
-              className={`track-row ${track.id === currentTrackId ? "track-row-active" : ""}`}
-              key={track.id}
-              onClick={() => onPlayList(sorted, index)}
-            >
-              <Thumbnail artworkPath={track.artworkPath} size={36} alt={track.album} />
-              <div className="track-info">
-                <span className="track-title">{track.title}</span>
-                <span className="track-meta">
-                  {track.artist} — {track.album}
-                </span>
-              </div>
-              <span className="track-duration mono">{formatTime(track.durationSecs)}</span>
-            </div>
-          ))
-        )}
-      </div>
+      {sorted.length === 0 ? (
+        <p className="track-list-empty">{tracks.length === 0 ? "No tracks yet." : "No matches."}</p>
+      ) : (
+        <TrackRows tracks={sorted} currentTrackId={currentTrackId} onPlayList={onPlayList} />
+      )}
     </div>
   );
 }

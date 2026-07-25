@@ -1,7 +1,8 @@
 import { ArrowLeft, Music, Play, Shuffle } from "lucide-react";
 import type { Track } from "../types";
 import { Thumbnail } from "./Thumbnail";
-import { formatTime, shuffleArray } from "../utils";
+import { TrackRows } from "./TrackRows";
+import { shuffleArray } from "../utils";
 
 type IconComponent = typeof Music;
 
@@ -63,24 +64,7 @@ export function TrackListDetail({
         </div>
       </div>
 
-      <div className="track-list">
-        {tracks.map((track, index) => (
-          <div
-            className={`track-row ${track.id === currentTrackId ? "track-row-active" : ""}`}
-            key={track.id}
-            onClick={() => onPlayList(tracks, index)}
-          >
-            <Thumbnail artworkPath={track.artworkPath} size={36} alt={track.album} />
-            <div className="track-info">
-              <span className="track-title">{track.title}</span>
-              <span className="track-meta">
-                {track.artist} — {track.album}
-              </span>
-            </div>
-            <span className="track-duration mono">{formatTime(track.durationSecs)}</span>
-          </div>
-        ))}
-      </div>
+      <TrackRows tracks={tracks} currentTrackId={currentTrackId} onPlayList={onPlayList} />
     </div>
   );
 }

@@ -62,6 +62,7 @@ pub fn run() {
             player::set_shuffle,
             player::set_repeat,
             stats::record_play,
+            stats::get_monthly_play_counts,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

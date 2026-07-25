@@ -16,6 +16,16 @@ export function formatTime(secs: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+export function formatDuration(totalSecs: number): string {
+  const totalMinutes = Math.floor(Math.max(0, totalSecs) / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours === 0) return `${minutes}m`;
+  const days = Math.floor(hours / 24);
+  if (days === 0) return `${hours}h ${minutes}m`;
+  return `${days}d ${hours % 24}h`;
+}
+
 export function shuffleArray<T>(items: T[]): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {

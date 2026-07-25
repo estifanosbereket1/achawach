@@ -1,5 +1,13 @@
-use sqlx::SqlitePool;
+use serde::Serialize;
+use sqlx::{Row, SqlitePool};
 use tauri::State;
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MonthlyPlayCount {
+    pub path: String,
+    pub count: i64,
+}
 
 #[tauri::command]
 pub async fn record_play(pool: State<'_, SqlitePool>, path: String) -> Result<(), String> {
@@ -27,4 +35,31 @@ pub async fn record_play(pool: State<'_, SqlitePool>, path: String) -> Result<()
         .map_err(|e| e.to_string())?;
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn get_monthly_play_counts(
+    pool: State<'_, SqlitePool>,
+) -> Result<Vec<MonthlyPlayCount>, String> {
+    let rows = sqlx::query(
+        "SELECT t.path AS path, COUNT(*) AS count
+         FROM play_history ph
+         JOIN tracks t ON t.id = ph.track_id
+         WHERE ph.played_at >= date('now', 'start of month')
+         GROUP BY t.id
+         ORDER BY count DESC",
+    )
+    .fetch_all(pool.inner())
+    .await
+    .map_err(|e| e.to_string())?;
+
+    rows.iter()
+        .map(|row| {
+            Ok(MonthlyPlayCount {
+                path: row.try_get("path")?,
+                count: row.try_get("count")?,
+            })
+        })
+        .collect::<Result<Vec<_>, sqlx::Error>>()
+        .map_err(|e| e.to_string())
 }
