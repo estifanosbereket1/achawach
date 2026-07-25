@@ -3,6 +3,22 @@
 version = 4
 
 [[package]]
+name = "achawatch"
+version = "0.1.0"
+dependencies = [
+ "lofty",
+ "rodio",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-opener",
+ "tauri-plugin-store",
+ "walkdir",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1395,22 +1411,6 @@ dependencies = [
  "libc",
  "system-deps",
  "winapi",
-]
-
-[[package]]
-name = "glassbeat"
-version = "0.1.0"
-dependencies = [
- "lofty",
- "rodio",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-opener",
- "tauri-plugin-store",
- "walkdir",
 ]
 
 [[package]]

@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    glassbeat_lib::run()
+    achawatch_lib::run()
 }
