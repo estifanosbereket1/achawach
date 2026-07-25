@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
+import { Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, Track } from "../types";
 import { RootChip } from "../components/RootChip";
 import { formatTime } from "../utils";
+
+const ICON_SIZE = 16;
 
 interface MusicPanelProps {
   roots: string[];
@@ -127,25 +130,34 @@ export function MusicPanel({
 
         <div className="transport-controls">
           <button
-            className={`pill-button ${snapshot?.shuffle ? "pill-button-active" : ""}`}
+            className={`icon-button ${snapshot?.shuffle ? "icon-button-active" : ""}`}
             onClick={onToggleShuffle}
+            aria-label="Shuffle"
+            title="Shuffle"
           >
-            Shuffle
+            <Shuffle size={ICON_SIZE} />
           </button>
-          <button className="pill-button" onClick={onPrev} disabled={!currentTrack}>
-            Prev
-          </button>
-          <button className="pill-button" onClick={onTogglePlayPause} disabled={!currentTrack}>
-            {snapshot && !snapshot.isPaused ? "Pause" : "Play"}
-          </button>
-          <button className="pill-button" onClick={onNext} disabled={!currentTrack}>
-            Next
+          <button className="icon-button" onClick={onPrev} disabled={!currentTrack} aria-label="Previous">
+            <SkipBack size={ICON_SIZE} />
           </button>
           <button
-            className={`pill-button ${snapshot && snapshot.repeat !== "off" ? "pill-button-active" : ""}`}
-            onClick={onCycleRepeat}
+            className="icon-button icon-button-play"
+            onClick={onTogglePlayPause}
+            disabled={!currentTrack}
+            aria-label={snapshot && !snapshot.isPaused ? "Pause" : "Play"}
           >
-            Repeat: {snapshot?.repeat ?? "off"}
+            {snapshot && !snapshot.isPaused ? <Pause size={ICON_SIZE} /> : <Play size={ICON_SIZE} />}
+          </button>
+          <button className="icon-button" onClick={onNext} disabled={!currentTrack} aria-label="Next">
+            <SkipForward size={ICON_SIZE} />
+          </button>
+          <button
+            className={`icon-button ${snapshot && snapshot.repeat !== "off" ? "icon-button-active" : ""}`}
+            onClick={onCycleRepeat}
+            aria-label="Repeat"
+            title={`Repeat: ${snapshot?.repeat ?? "off"}`}
+          >
+            {snapshot?.repeat === "one" ? <Repeat1 size={ICON_SIZE} /> : <Repeat size={ICON_SIZE} />}
           </button>
           <div className="transport-volume">
             <span>Vol</span>

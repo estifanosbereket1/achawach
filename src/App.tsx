@@ -1,9 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
+import { Settings } from "lucide-react";
 import { useMusicLibrary } from "./hooks/useMusicLibrary";
 import { usePlayer } from "./hooks/usePlayer";
+import { useSettings } from "./hooks/useSettings";
 import { MusicPanel } from "./panels/MusicPanel";
+import { SettingsPanel } from "./panels/SettingsPanel";
 import "./App.css";
 
 const ORB_SIZE = 64;
@@ -11,11 +14,27 @@ const DOCK_WIDTH = 820;
 const DOCK_HEIGHT = 560;
 const DOCK_TOP_MARGIN = 24;
 
+type PanelId = "music" | "settings";
+
 function App() {
   const [expanded, setExpanded] = useState(false);
+  const [panel, setPanel] = useState<PanelId>("music");
   const orbPosition = useRef<{ x: number; y: number } | null>(null);
   const library = useMusicLibrary();
   const player = usePlayer(library.tracks);
+  const settings = useSettings();
+
+  useEffect(() => {
+    if (settings.isLoaded) {
+      player.setVolume(settings.volume);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.isLoaded]);
+
+  function handleVolumeChange(volume: number) {
+    player.setVolume(volume);
+    settings.setVolume(volume);
+  }
 
   async function expand() {
     const win = getCurrentWindow();
@@ -47,23 +66,40 @@ function App() {
             <button className="collapse-btn" onClick={collapse}>
               ×
             </button>
-            <MusicPanel
-              roots={library.roots}
-              tracks={library.tracks}
-              isScanning={library.isScanning}
-              onAddRoots={library.addRoots}
-              onRemoveRoot={library.removeRoot}
-              onRescan={library.rescan}
-              snapshot={player.snapshot}
-              onTrackClick={(list, index) => player.playTrackList(list, index)}
-              onTogglePlayPause={player.togglePlayPause}
-              onNext={player.next}
-              onPrev={player.prev}
-              onSeek={player.seek}
-              onVolumeChange={player.setVolume}
-              onToggleShuffle={player.toggleShuffle}
-              onCycleRepeat={player.cycleRepeat}
-            />
+            <button
+              className="settings-toggle-btn"
+              onClick={() => setPanel(panel === "music" ? "settings" : "music")}
+              aria-label="Settings"
+            >
+              <Settings size={16} />
+            </button>
+
+            {panel === "music" ? (
+              <MusicPanel
+                roots={library.roots}
+                tracks={library.tracks}
+                isScanning={library.isScanning}
+                onAddRoots={library.addRoots}
+                onRemoveRoot={library.removeRoot}
+                onRescan={library.rescan}
+                snapshot={player.snapshot}
+                onTrackClick={(list, index) => player.playTrackList(list, index)}
+                onTogglePlayPause={player.togglePlayPause}
+                onNext={player.next}
+                onPrev={player.prev}
+                onSeek={player.seek}
+                onVolumeChange={handleVolumeChange}
+                onToggleShuffle={player.toggleShuffle}
+                onCycleRepeat={player.cycleRepeat}
+              />
+            ) : (
+              <SettingsPanel
+                accent={settings.accent}
+                opacity={settings.opacity}
+                onAccentChange={settings.setAccent}
+                onOpacityChange={settings.setOpacity}
+              />
+            )}
           </div>
         ) : (
           <div className="orb-dot" />

@@ -107,12 +107,33 @@ input[type="range"] {
   accent-color: var(--accent);
 }
 
+.settings-toggle-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.settings-toggle-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .music-panel {
   display: flex;
   flex-direction: column;
   gap: 12px;
   height: 100%;
-  padding-top: 8px;
+  padding-top: 36px;
 }
 
 .root-row {
@@ -166,9 +187,46 @@ input[type="range"] {
   border-color: var(--accent);
 }
 
-.pill-button-active {
+.icon-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.icon-button:hover:not(:disabled) {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.icon-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.icon-button-active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.icon-button-play {
+  width: 38px;
+  height: 38px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+
+.icon-button-play:hover:not(:disabled) {
+  color: var(--surface);
+  opacity: 0.9;
 }
 
 .search-input {
@@ -299,4 +357,39 @@ input[type="range"] {
 
 .transport-volume input[type="range"] {
   width: 90px;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 36px;
+}
+
+.settings-heading {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.7;
+  margin: 12px 0 4px;
+}
+
+.settings-heading:first-child {
+  margin-top: 0;
+}
+
+.accent-swatch-row {
+  display: flex;
+  gap: 12px;
+}
+
+.accent-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.accent-swatch-active {
+  border-color: rgba(255, 255, 255, 0.8);
 }
