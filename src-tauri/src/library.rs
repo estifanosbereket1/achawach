@@ -21,6 +21,7 @@ pub struct Track {
     pub genre: String,
     pub duration_secs: i64,
     pub artwork_path: Option<String>,
+    pub track_number: Option<i64>,
 }
 
 struct ScannedTrack {
@@ -31,6 +32,7 @@ struct ScannedTrack {
     genre: String,
     duration_secs: i64,
     artwork_path: Option<String>,
+    track_number: Option<i64>,
 }
 
 fn is_audio_file(path: &Path) -> bool {
@@ -93,6 +95,7 @@ fn read_track(path: &Path, artwork_dir: &Path) -> Option<ScannedTrack> {
         .unwrap_or_else(|| "Unknown Genre".to_string());
     let duration_secs = tagged_file.properties().duration().as_secs() as i64;
     let artwork_path = extract_artwork(tag, path, artwork_dir);
+    let track_number = tag.and_then(|t| t.track()).map(|n| n as i64);
 
     Some(ScannedTrack {
         path: path.to_string_lossy().to_string(),
@@ -102,20 +105,22 @@ fn read_track(path: &Path, artwork_dir: &Path) -> Option<ScannedTrack> {
         genre,
         duration_secs,
         artwork_path,
+        track_number,
     })
 }
 
 async fn upsert_track(pool: &SqlitePool, scanned: &ScannedTrack) -> Result<(), String> {
     sqlx::query(
-        "INSERT INTO tracks (path, title, artist, album, genre, duration_secs, artwork_path, date_added)
-         VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        "INSERT INTO tracks (path, title, artist, album, genre, duration_secs, artwork_path, track_number, date_added)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
          ON CONFLICT(path) DO UPDATE SET
             title = excluded.title,
             artist = excluded.artist,
             album = excluded.album,
             genre = excluded.genre,
             duration_secs = excluded.duration_secs,
-            artwork_path = excluded.artwork_path",
+            artwork_path = excluded.artwork_path,
+            track_number = excluded.track_number",
     )
     .bind(&scanned.path)
     .bind(&scanned.title)
@@ -124,6 +129,7 @@ async fn upsert_track(pool: &SqlitePool, scanned: &ScannedTrack) -> Result<(), S
     .bind(&scanned.genre)
     .bind(scanned.duration_secs)
     .bind(&scanned.artwork_path)
+    .bind(scanned.track_number)
     .execute(pool)
     .await
     .map_err(|e| e.to_string())?;
@@ -141,12 +147,13 @@ fn row_to_track(row: &sqlx::sqlite::SqliteRow) -> Result<Track, sqlx::Error> {
         genre: row.try_get("genre")?,
         duration_secs: row.try_get("duration_secs")?,
         artwork_path: row.try_get("artwork_path")?,
+        track_number: row.try_get("track_number")?,
     })
 }
 
 pub async fn fetch_library(pool: &SqlitePool) -> Result<Vec<Track>, String> {
     let rows = sqlx::query(
-        "SELECT path, title, artist, album, genre, duration_secs, artwork_path
+        "SELECT path, title, artist, album, genre, duration_secs, artwork_path, track_number
          FROM tracks ORDER BY title COLLATE NOCASE",
     )
     .fetch_all(pool)

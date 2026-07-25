@@ -7,6 +7,7 @@ export interface Track {
   genre: string;
   durationSecs: number;
   artworkPath: string | null;
+  trackNumber: number | null;
 }
 
 export type RepeatMode = "off" | "all" | "one";

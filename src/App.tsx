@@ -76,14 +76,9 @@ function App() {
 
             {panel === "music" ? (
               <MusicPanel
-                roots={library.roots}
                 tracks={library.tracks}
-                isScanning={library.isScanning}
-                onAddRoots={library.addRoots}
-                onRemoveRoot={library.removeRoot}
-                onRescan={library.rescan}
                 snapshot={player.snapshot}
-                onTrackClick={(list, index) => player.playTrackList(list, index)}
+                onPlayList={(list, index) => player.playTrackList(list, index)}
                 onTogglePlayPause={player.togglePlayPause}
                 onNext={player.next}
                 onPrev={player.prev}
@@ -98,6 +93,11 @@ function App() {
                 opacity={settings.opacity}
                 onAccentChange={settings.setAccent}
                 onOpacityChange={settings.setOpacity}
+                roots={library.roots}
+                isScanning={library.isScanning}
+                onAddRoots={library.addRoots}
+                onRemoveRoot={library.removeRoot}
+                onRescan={library.rescan}
               />
             )}
           </div>

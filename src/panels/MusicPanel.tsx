@@ -1,21 +1,31 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, Track } from "../types";
-import { RootChip } from "../components/RootChip";
+import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { Thumbnail } from "../components/Thumbnail";
+import { PlayNowTab } from "./PlayNowTab";
+import { TracksTab } from "./TracksTab";
+import { ArtistsTab } from "./ArtistsTab";
+import { AlbumsTab } from "./AlbumsTab";
+import { GenresTab } from "./GenresTab";
 import { formatTime } from "../utils";
 
 const ICON_SIZE = 16;
 
+type LibraryTab = "playnow" | "tracks" | "artists" | "albums" | "genres";
+
+const TABS: { id: LibraryTab; label: string }[] = [
+  { id: "playnow", label: "Play Now" },
+  { id: "tracks", label: "Tracks" },
+  { id: "artists", label: "Artists" },
+  { id: "albums", label: "Albums" },
+  { id: "genres", label: "Genres" },
+];
+
 interface MusicPanelProps {
-  roots: string[];
   tracks: Track[];
-  isScanning: boolean;
-  onAddRoots: () => void;
-  onRemoveRoot: (root: string) => void;
-  onRescan: () => void;
   snapshot: PlayerSnapshot | null;
-  onTrackClick: (list: Track[], index: number) => void;
+  onPlayList: (list: Track[], index: number) => void;
   onTogglePlayPause: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -26,14 +36,9 @@ interface MusicPanelProps {
 }
 
 export function MusicPanel({
-  roots,
   tracks,
-  isScanning,
-  onAddRoots,
-  onRemoveRoot,
-  onRescan,
   snapshot,
-  onTrackClick,
+  onPlayList,
   onTogglePlayPause,
   onNext,
   onPrev,
@@ -42,18 +47,8 @@ export function MusicPanel({
   onToggleShuffle,
   onCycleRepeat,
 }: MusicPanelProps) {
-  const [query, setQuery] = useState("");
-
-  const filteredTracks = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return tracks;
-    return tracks.filter(
-      (t) =>
-        t.title.toLowerCase().includes(q) ||
-        t.artist.toLowerCase().includes(q) ||
-        t.album.toLowerCase().includes(q),
-    );
-  }, [tracks, query]);
+  const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
+  const groups = useLibraryGroups(tracks);
 
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
@@ -61,52 +56,47 @@ export function MusicPanel({
 
   return (
     <div className="music-panel">
-      <div className="root-row">
-        {roots.map((root) => (
-          <RootChip key={root} path={root} onRemove={() => onRemoveRoot(root)} />
+      <div className="library-tab-row">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`pill-button ${activeTab === tab.id ? "icon-button-active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
         ))}
-        <button className="pill-button" onClick={onAddRoots}>
-          + Add Folder
-        </button>
-        <button className="pill-button" onClick={onRescan} disabled={isScanning || roots.length === 0}>
-          {isScanning ? "Scanning…" : "Rescan"}
-        </button>
       </div>
 
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Search title, artist, album…"
-        value={query}
-        onChange={(e) => setQuery(e.currentTarget.value)}
-      />
-
-      <div className="track-list">
-        {filteredTracks.length === 0 ? (
-          <p className="track-list-empty">
-            {tracks.length === 0
-              ? roots.length === 0
-                ? "Add a folder to scan for music."
-                : "No tracks found."
-              : "No matches."}
-          </p>
-        ) : (
-          filteredTracks.map((track, index) => (
-            <div
-              className={`track-row ${track.id === snapshot?.currentTrackId ? "track-row-active" : ""}`}
-              key={track.id}
-              onClick={() => onTrackClick(filteredTracks, index)}
-            >
-              <Thumbnail artworkPath={track.artworkPath} size={36} alt={track.album} />
-              <div className="track-info">
-                <span className="track-title">{track.title}</span>
-                <span className="track-meta">
-                  {track.artist} — {track.album}
-                </span>
-              </div>
-              <span className="track-duration mono">{formatTime(track.durationSecs)}</span>
-            </div>
-          ))
+      <div className="library-tab-content">
+        {activeTab === "playnow" && <PlayNowTab />}
+        {activeTab === "tracks" && (
+          <TracksTab
+            tracks={tracks}
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+          />
+        )}
+        {activeTab === "artists" && (
+          <ArtistsTab
+            artists={groups.artists}
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+          />
+        )}
+        {activeTab === "albums" && (
+          <AlbumsTab
+            albums={groups.albums}
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+          />
+        )}
+        {activeTab === "genres" && (
+          <GenresTab
+            genres={groups.genres}
+            currentTrackId={snapshot?.currentTrackId ?? null}
+            onPlayList={onPlayList}
+          />
         )}
       </div>
 

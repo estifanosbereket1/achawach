@@ -1,3 +1,5 @@
+import { RootChip } from "../components/RootChip";
+
 const ACCENT_PRESETS = [
   { name: "Amber", value: "#ff9f5b" },
   { name: "Teal", value: "#5eead4" },
@@ -11,11 +13,39 @@ interface SettingsPanelProps {
   opacity: number;
   onAccentChange: (value: string) => void;
   onOpacityChange: (value: number) => void;
+  roots: string[];
+  isScanning: boolean;
+  onAddRoots: () => void;
+  onRemoveRoot: (root: string) => void;
+  onRescan: () => void;
 }
 
-export function SettingsPanel({ accent, opacity, onAccentChange, onOpacityChange }: SettingsPanelProps) {
+export function SettingsPanel({
+  accent,
+  opacity,
+  onAccentChange,
+  onOpacityChange,
+  roots,
+  isScanning,
+  onAddRoots,
+  onRemoveRoot,
+  onRescan,
+}: SettingsPanelProps) {
   return (
     <div className="settings-panel">
+      <h3 className="settings-heading">Music Folders</h3>
+      <div className="root-row">
+        {roots.map((root) => (
+          <RootChip key={root} path={root} onRemove={() => onRemoveRoot(root)} />
+        ))}
+        <button className="pill-button" onClick={onAddRoots}>
+          + Add Folder
+        </button>
+        <button className="pill-button" onClick={onRescan} disabled={isScanning || roots.length === 0}>
+          {isScanning ? "Scanning…" : "Rescan"}
+        </button>
+      </div>
+
       <h3 className="settings-heading">Accent Color</h3>
       <div className="accent-swatch-row">
         {ACCENT_PRESETS.map((preset) => (
