@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import type { PlaylistSummary, Track } from "../types";
 import { confirmUnless } from "../utils";
+
+const M3U_FILTERS = [{ name: "M3U Playlist", extensions: ["m3u", "m3u8"] }];
+
+export interface ImportResult {
+  playlistId: number;
+  matched: number;
+  total: number;
+}
 
 export function usePlaylists() {
   const [playlists, setPlaylists] = useState<PlaylistSummary[]>([]);
@@ -73,6 +82,28 @@ export function usePlaylists() {
     [createPlaylist, setPlaylistTracks],
   );
 
+  const exportPlaylist = useCallback(async (playlistId: number, suggestedName: string) => {
+    const filePath = await save({
+      title: "Export playlist",
+      defaultPath: `${suggestedName}.m3u`,
+      filters: M3U_FILTERS,
+    });
+    if (!filePath) return false;
+    await invoke("export_playlist_m3u", { playlistId, filePath });
+    return true;
+  }, []);
+
+  const importPlaylist = useCallback(async (): Promise<ImportResult | null> => {
+    const filePath = await open({ title: "Import playlist", filters: M3U_FILTERS });
+    if (!filePath || Array.isArray(filePath)) return null;
+
+    const fileName = filePath.split("/").pop() ?? "Imported Playlist";
+    const playlistName = fileName.replace(/\.m3u8?$/i, "");
+    const result = await invoke<ImportResult>("import_playlist_m3u", { filePath, playlistName });
+    await refresh();
+    return result;
+  }, [refresh]);
+
   return {
     playlists,
     createPlaylist,
@@ -82,5 +113,7 @@ export function usePlaylists() {
     setPlaylistTracks,
     addTrackToPlaylist,
     createPlaylistWithTrack,
+    exportPlaylist,
+    importPlaylist,
   };
 }

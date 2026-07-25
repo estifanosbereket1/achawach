@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ListMusic, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
+import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
@@ -48,6 +49,8 @@ interface MusicPanelProps extends PlaylistActions {
   onDeletePlaylist: (playlistId: number, name: string) => void;
   getPlaylistTracks: (playlistId: number) => Promise<Track[]>;
   setPlaylistTracks: (playlistId: number, trackPaths: string[]) => Promise<void>;
+  onExportPlaylist: (playlistId: number, suggestedName: string) => Promise<boolean>;
+  onImportPlaylist: () => Promise<ImportResult | null>;
 }
 
 export function MusicPanel({
@@ -74,6 +77,8 @@ export function MusicPanel({
   onDeletePlaylist,
   getPlaylistTracks,
   setPlaylistTracks,
+  onExportPlaylist,
+  onImportPlaylist,
 }: MusicPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
   const [showQueue, setShowQueue] = useState(false);
@@ -164,6 +169,8 @@ export function MusicPanel({
             onDeletePlaylist={onDeletePlaylist}
             getPlaylistTracks={getPlaylistTracks}
             setPlaylistTracks={setPlaylistTracks}
+            onExportPlaylist={onExportPlaylist}
+            onImportPlaylist={onImportPlaylist}
             {...playlistProps}
           />
         )}

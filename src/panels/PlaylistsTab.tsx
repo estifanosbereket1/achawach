@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronUp, FileDown, FileUp, Pencil, Plus, Trash2, X } from "lucide-react";
 import type { PlaylistActions, PlaylistSummary, Track } from "../types";
+import type { ImportResult } from "../hooks/usePlaylists";
 import { Thumbnail } from "../components/Thumbnail";
 import { SectionHeader } from "../components/SectionHeader";
 import { formatTime } from "../utils";
@@ -13,6 +14,8 @@ interface PlaylistsTabProps extends PlaylistActions {
   onDeletePlaylist: (playlistId: number, name: string) => void;
   getPlaylistTracks: (playlistId: number) => Promise<Track[]>;
   setPlaylistTracks: (playlistId: number, trackPaths: string[]) => Promise<void>;
+  onExportPlaylist: (playlistId: number, suggestedName: string) => Promise<boolean>;
+  onImportPlaylist: () => Promise<ImportResult | null>;
 }
 
 function PlaylistDetail({
@@ -132,11 +135,20 @@ export function PlaylistsTab({
   onDeletePlaylist,
   getPlaylistTracks,
   setPlaylistTracks,
+  onExportPlaylist,
+  onImportPlaylist,
 }: PlaylistsTabProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [newName, setNewName] = useState("");
   const [renamingId, setRenamingId] = useState<number | null>(null);
   const [renameValue, setRenameValue] = useState("");
+  const [importMessage, setImportMessage] = useState<string | null>(null);
+
+  async function handleImport() {
+    const result = await onImportPlaylist();
+    if (!result) return;
+    setImportMessage(`Imported ${result.matched} of ${result.total} tracks (some may not be in your library).`);
+  }
 
   const selected = playlists.find((p) => p.id === selectedId);
   if (selected) {
@@ -179,7 +191,16 @@ export function PlaylistsTab({
         >
           <Plus size={16} />
         </button>
+        <button className="icon-button" onClick={handleImport} aria-label="Import M3U playlist" title="Import M3U">
+          <FileUp size={16} />
+        </button>
       </div>
+
+      {importMessage && (
+        <div className="dropdown-empty" onClick={() => setImportMessage(null)}>
+          {importMessage}
+        </div>
+      )}
 
       {playlists.length === 0 ? (
         <p className="track-list-empty">No playlists yet.</p>
@@ -221,6 +242,14 @@ export function PlaylistsTab({
                   {playlist.trackCount} track{playlist.trackCount === 1 ? "" : "s"}
                 </span>
                 <div className="playlist-row-actions" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    className="icon-button"
+                    onClick={() => onExportPlaylist(playlist.id, playlist.name)}
+                    aria-label="Export as M3U"
+                    title="Export as M3U"
+                  >
+                    <FileDown size={14} />
+                  </button>
                   <button
                     className="icon-button"
                     onClick={() => {

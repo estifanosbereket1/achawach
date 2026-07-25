@@ -109,6 +109,8 @@ function App() {
                 onDeletePlaylist={playlists.deletePlaylist}
                 getPlaylistTracks={playlists.getPlaylistTracks}
                 setPlaylistTracks={playlists.setPlaylistTracks}
+                onExportPlaylist={playlists.exportPlaylist}
+                onImportPlaylist={playlists.importPlaylist}
               />
             ) : (
               <SettingsPanel

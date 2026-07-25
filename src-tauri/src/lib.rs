@@ -75,6 +75,8 @@ pub fn run() {
             playlists::delete_playlist,
             playlists::get_playlist_tracks,
             playlists::set_playlist_tracks,
+            playlists::export_playlist_m3u,
+            playlists::import_playlist_m3u,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
