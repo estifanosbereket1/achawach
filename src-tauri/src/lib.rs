@@ -6,6 +6,8 @@ use tauri::Manager;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let menu = MenuBuilder::new(app)
                 .text("show", "Show")
