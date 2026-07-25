@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, Track } from "../types";
 import { RootChip } from "../components/RootChip";
+import { Thumbnail } from "../components/Thumbnail";
 import { formatTime } from "../utils";
 
 const ICON_SIZE = 16;
@@ -96,6 +97,7 @@ export function MusicPanel({
               key={track.id}
               onClick={() => onTrackClick(filteredTracks, index)}
             >
+              <Thumbnail artworkPath={track.artworkPath} size={36} alt={track.album} />
               <div className="track-info">
                 <span className="track-title">{track.title}</span>
                 <span className="track-meta">
@@ -110,8 +112,11 @@ export function MusicPanel({
 
       <div className="transport-bar">
         <div className="transport-now-playing">
-          <span className="track-title">{currentTrack?.title ?? "Nothing playing"}</span>
-          <span className="track-meta">{currentTrack?.artist ?? ""}</span>
+          <Thumbnail artworkPath={currentTrack?.artworkPath ?? null} size={44} alt={currentTrack?.album} />
+          <div className="transport-now-playing-info">
+            <span className="track-title">{currentTrack?.title ?? "Nothing playing"}</span>
+            <span className="track-meta">{currentTrack?.artist ?? ""}</span>
+          </div>
         </div>
 
         <div className="transport-progress">

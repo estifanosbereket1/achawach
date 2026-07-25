@@ -1,3 +1,4 @@
+mod db;
 mod library;
 mod player;
 
@@ -15,6 +16,11 @@ pub fn run() {
             let player_handle =
                 player::PlayerHandle::new().expect("failed to initialize audio output device");
             app.manage(player_handle);
+
+            let app_data_dir = app.path().app_data_dir()?;
+            let pool = tauri::async_runtime::block_on(db::init_pool(&app_data_dir))
+                .expect("failed to initialize database");
+            app.manage(pool);
 
             let menu = MenuBuilder::new(app)
                 .text("show", "Show")
@@ -43,6 +49,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             library::scan_folders,
+            library::get_library,
             player::set_queue,
             player::play,
             player::pause,

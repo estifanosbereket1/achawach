@@ -14,45 +14,36 @@ export function useMusicLibrary() {
   const [isLoaded, setIsLoaded] = useState(false);
   const storeRef = useRef<Store | null>(null);
 
-  const persist = useCallback(async (nextRoots: string[], nextTracks: Track[]) => {
-    const store = storeRef.current;
-    if (!store) return;
-    await store.set("roots", nextRoots);
-    await store.set("tracks", nextTracks);
+  const persistRoots = useCallback(async (nextRoots: string[]) => {
+    await storeRef.current?.set("roots", nextRoots);
   }, []);
 
-  const rescan = useCallback(
-    async (rootsToScan?: string[]) => {
-      const targetRoots = rootsToScan ?? roots;
-      if (targetRoots.length === 0) return;
-      setIsScanning(true);
-      try {
-        const scanned = await invoke<Track[]>("scan_folders", { roots: targetRoots });
-        setTracks(scanned);
-        await persist(targetRoots, scanned);
-      } finally {
-        setIsScanning(false);
-      }
-    },
-    [roots, persist],
-  );
+  const rescan = useCallback(async (rootsToScan: string[]) => {
+    setIsScanning(true);
+    try {
+      const scanned = await invoke<Track[]>("scan_folders", { roots: rootsToScan });
+      setTracks(scanned);
+    } finally {
+      setIsScanning(false);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
       const store = await Store.load(STORE_PATH);
       storeRef.current = store;
       const savedRoots = (await store.get<string[]>("roots")) ?? [];
-      const savedTracks = (await store.get<Track[]>("tracks")) ?? [];
       setRoots(savedRoots);
-      setTracks(savedTracks);
+
+      const library = await invoke<Track[]>("get_library");
+      setTracks(library);
       setIsLoaded(true);
 
-      if (savedRoots.length > 0 && savedTracks.length === 0) {
+      if (savedRoots.length > 0 && library.length === 0) {
         await rescan(savedRoots);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     })();
-  }, []);
+  }, [rescan]);
 
   const addRoots = useCallback(async () => {
     const selection = await open({ directory: true, multiple: true });
@@ -61,9 +52,9 @@ export function useMusicLibrary() {
     const nextRoots = Array.from(new Set([...roots, ...picked]));
     if (nextRoots.length === roots.length) return;
     setRoots(nextRoots);
-    await persist(nextRoots, tracks);
+    await persistRoots(nextRoots);
     await rescan(nextRoots);
-  }, [roots, tracks, persist, rescan]);
+  }, [roots, persistRoots, rescan]);
 
   const removeRoot = useCallback(
     async (root: string) => {
@@ -74,12 +65,11 @@ export function useMusicLibrary() {
       if (!confirmed) return;
 
       const nextRoots = roots.filter((r) => r !== root);
-      const nextTracks = tracks.filter((t) => !t.path.startsWith(root));
       setRoots(nextRoots);
-      setTracks(nextTracks);
-      await persist(nextRoots, nextTracks);
+      await persistRoots(nextRoots);
+      await rescan(nextRoots);
     },
-    [roots, tracks, persist],
+    [roots, persistRoots, rescan],
   );
 
   return {
@@ -89,6 +79,6 @@ export function useMusicLibrary() {
     isLoaded,
     addRoots,
     removeRoot,
-    rescan: () => rescan(),
+    rescan: () => rescan(roots),
   };
 }

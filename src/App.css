@@ -261,12 +261,9 @@ input[type="range"] {
 .track-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
   padding: 8px 10px;
   border-radius: 10px;
-}
-
-.track-row {
   cursor: pointer;
 }
 
@@ -286,6 +283,22 @@ input[type="range"] {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
+}
+
+.thumbnail {
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thumbnail-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .track-title {
@@ -321,7 +334,14 @@ input[type="range"] {
 
 .transport-now-playing {
   display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transport-now-playing-info {
+  display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .transport-progress {

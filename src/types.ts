@@ -4,12 +4,9 @@ export interface Track {
   title: string;
   artist: string;
   album: string;
+  genre: string;
   durationSecs: number;
-}
-
-export interface LibraryCache {
-  roots: string[];
-  tracks: Track[];
+  artworkPath: string | null;
 }
 
 export type RepeatMode = "off" | "all" | "one";
