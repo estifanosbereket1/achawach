@@ -7,6 +7,7 @@ import { usePlayer } from "./hooks/usePlayer";
 import { useSettings } from "./hooks/useSettings";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { useEqualizer } from "./hooks/useEqualizer";
+import { useSleepTimer } from "./hooks/useSleepTimer";
 import { MusicPanel } from "./panels/MusicPanel";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import "./App.css";
@@ -27,6 +28,11 @@ function App() {
   const settings = useSettings();
   const playlists = usePlaylists();
   const equalizer = useEqualizer();
+  const sleepTimer = useSleepTimer(() => {
+    if (player.snapshot && !player.snapshot.isPaused) {
+      player.togglePlayPause();
+    }
+  });
 
   useEffect(() => {
     if (settings.isLoaded) {
@@ -92,6 +98,9 @@ function App() {
                 onCycleRepeat={player.cycleRepeat}
                 onJumpToIndex={player.jumpToIndex}
                 onReorderQueue={player.reorderQueue}
+                sleepTimerRemainingSecs={sleepTimer.remainingSecs}
+                onStartSleepTimer={sleepTimer.startTimer}
+                onCancelSleepTimer={sleepTimer.cancelTimer}
                 playlists={playlists.playlists}
                 onAddToPlaylist={playlists.addTrackToPlaylist}
                 onCreatePlaylistWithTrack={playlists.createPlaylistWithTrack}

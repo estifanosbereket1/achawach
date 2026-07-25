@@ -678,7 +678,6 @@ input[type="range"] {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 6px);
   z-index: 10;
   min-width: 160px;
   max-width: 220px;
@@ -692,6 +691,14 @@ input[type="range"] {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   padding: 6px;
   gap: 2px;
+}
+
+.dropdown-menu-down {
+  top: calc(100% + 6px);
+}
+
+.dropdown-menu-up {
+  bottom: calc(100% + 6px);
 }
 
 .dropdown-menu-left {

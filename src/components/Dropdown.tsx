@@ -4,9 +4,10 @@ interface DropdownProps {
   trigger: ReactNode;
   children: (close: () => void) => ReactNode;
   align?: "left" | "right";
+  direction?: "down" | "up";
 }
 
-export function Dropdown({ trigger, children, align = "left" }: DropdownProps) {
+export function Dropdown({ trigger, children, align = "left", direction = "down" }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -24,7 +25,11 @@ export function Dropdown({ trigger, children, align = "left" }: DropdownProps) {
   return (
     <div className="dropdown" ref={ref} onClick={(e) => e.stopPropagation()}>
       <div onClick={() => setOpen((o) => !o)}>{trigger}</div>
-      {open && <div className={`dropdown-menu dropdown-menu-${align}`}>{children(() => setOpen(false))}</div>}
+      {open && (
+        <div className={`dropdown-menu dropdown-menu-${align} dropdown-menu-${direction}`}>
+          {children(() => setOpen(false))}
+        </div>
+      )}
     </div>
   );
 }

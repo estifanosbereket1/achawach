@@ -5,6 +5,7 @@ import { Dropdown } from "./Dropdown";
 
 interface AddToPlaylistMenuProps extends PlaylistActions {
   track: Track;
+  direction?: "down" | "up";
 }
 
 export function AddToPlaylistMenu({
@@ -12,12 +13,14 @@ export function AddToPlaylistMenu({
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
+  direction = "down",
 }: AddToPlaylistMenuProps) {
   const [newName, setNewName] = useState("");
 
   return (
     <Dropdown
       align="right"
+      direction={direction}
       trigger={
         <button className="icon-button" aria-label="Add to playlist" title="Add to playlist">
           <ListPlus size={16} />

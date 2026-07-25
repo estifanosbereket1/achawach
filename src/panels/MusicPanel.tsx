@@ -5,6 +5,7 @@ import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
 import { QueueView } from "../components/QueueView";
+import { SleepTimerMenu } from "../components/SleepTimerMenu";
 import { PlayNowTab } from "./PlayNowTab";
 import { TracksTab } from "./TracksTab";
 import { ArtistsTab } from "./ArtistsTab";
@@ -39,6 +40,9 @@ interface MusicPanelProps extends PlaylistActions {
   onCycleRepeat: () => void;
   onJumpToIndex: (index: number) => void;
   onReorderQueue: (trackIds: string[]) => void;
+  sleepTimerRemainingSecs: number | null;
+  onStartSleepTimer: (seconds: number) => void;
+  onCancelSleepTimer: () => void;
   onCreatePlaylist: (name: string) => Promise<number>;
   onRenamePlaylist: (playlistId: number, name: string) => void;
   onDeletePlaylist: (playlistId: number, name: string) => void;
@@ -59,6 +63,9 @@ export function MusicPanel({
   onCycleRepeat,
   onJumpToIndex,
   onReorderQueue,
+  sleepTimerRemainingSecs,
+  onStartSleepTimer,
+  onCancelSleepTimer,
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
@@ -177,6 +184,7 @@ export function MusicPanel({
               playlists={playlists}
               onAddToPlaylist={onAddToPlaylist}
               onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+              direction="up"
             />
           )}
         </div>
@@ -234,6 +242,11 @@ export function MusicPanel({
           >
             <ListMusic size={ICON_SIZE} />
           </button>
+          <SleepTimerMenu
+            remainingSecs={sleepTimerRemainingSecs}
+            onStart={onStartSleepTimer}
+            onCancel={onCancelSleepTimer}
+          />
           <div className="transport-volume">
             <span>Vol</span>
             <input
