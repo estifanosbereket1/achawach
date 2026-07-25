@@ -1,5 +1,5 @@
-import type { Track } from "../types";
-import type { PlayerSnapshot } from "../hooks/usePlayer";
+import { useMemo, useState } from "react";
+import type { PlayerSnapshot, Track } from "../types";
 import { RootChip } from "../components/RootChip";
 import { formatTime } from "../utils";
 
@@ -11,12 +11,14 @@ interface MusicPanelProps {
   onRemoveRoot: (root: string) => void;
   onRescan: () => void;
   snapshot: PlayerSnapshot | null;
-  onTrackClick: (track: Track, index: number) => void;
+  onTrackClick: (list: Track[], index: number) => void;
   onTogglePlayPause: () => void;
   onNext: () => void;
   onPrev: () => void;
   onSeek: (positionSecs: number) => void;
   onVolumeChange: (volume: number) => void;
+  onToggleShuffle: () => void;
+  onCycleRepeat: () => void;
 }
 
 export function MusicPanel({
@@ -33,7 +35,22 @@ export function MusicPanel({
   onPrev,
   onSeek,
   onVolumeChange,
+  onToggleShuffle,
+  onCycleRepeat,
 }: MusicPanelProps) {
+  const [query, setQuery] = useState("");
+
+  const filteredTracks = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return tracks;
+    return tracks.filter(
+      (t) =>
+        t.title.toLowerCase().includes(q) ||
+        t.artist.toLowerCase().includes(q) ||
+        t.album.toLowerCase().includes(q),
+    );
+  }, [tracks, query]);
+
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
   const duration = currentTrack?.durationSecs ?? 0;
@@ -52,17 +69,29 @@ export function MusicPanel({
         </button>
       </div>
 
+      <input
+        className="search-input"
+        type="text"
+        placeholder="Search title, artist, album…"
+        value={query}
+        onChange={(e) => setQuery(e.currentTarget.value)}
+      />
+
       <div className="track-list">
-        {tracks.length === 0 ? (
+        {filteredTracks.length === 0 ? (
           <p className="track-list-empty">
-            {roots.length === 0 ? "Add a folder to scan for music." : "No tracks found."}
+            {tracks.length === 0
+              ? roots.length === 0
+                ? "Add a folder to scan for music."
+                : "No tracks found."
+              : "No matches."}
           </p>
         ) : (
-          tracks.map((track, index) => (
+          filteredTracks.map((track, index) => (
             <div
               className={`track-row ${track.id === snapshot?.currentTrackId ? "track-row-active" : ""}`}
               key={track.id}
-              onClick={() => onTrackClick(track, index)}
+              onClick={() => onTrackClick(filteredTracks, index)}
             >
               <div className="track-info">
                 <span className="track-title">{track.title}</span>
@@ -97,6 +126,12 @@ export function MusicPanel({
         </div>
 
         <div className="transport-controls">
+          <button
+            className={`pill-button ${snapshot?.shuffle ? "pill-button-active" : ""}`}
+            onClick={onToggleShuffle}
+          >
+            Shuffle
+          </button>
           <button className="pill-button" onClick={onPrev} disabled={!currentTrack}>
             Prev
           </button>
@@ -105,6 +140,12 @@ export function MusicPanel({
           </button>
           <button className="pill-button" onClick={onNext} disabled={!currentTrack}>
             Next
+          </button>
+          <button
+            className={`pill-button ${snapshot && snapshot.repeat !== "off" ? "pill-button-active" : ""}`}
+            onClick={onCycleRepeat}
+          >
+            Repeat: {snapshot?.repeat ?? "off"}
           </button>
           <div className="transport-volume">
             <span>Vol</span>

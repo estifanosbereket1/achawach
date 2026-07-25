@@ -166,6 +166,26 @@ input[type="range"] {
   border-color: var(--accent);
 }
 
+.pill-button-active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: #f0f0f0;
+  font-size: 13px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .track-list {
   flex: 1;
   overflow-y: auto;

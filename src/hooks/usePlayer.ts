@@ -1,18 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import type { Track } from "../types";
-
-export interface PlayerSnapshot {
-  currentTrackId: string | null;
-  isPaused: boolean;
-  positionSecs: number;
-  queue: string[];
-  currentIndex: number;
-  volume: number;
-}
+import type { PlayerSnapshot, RepeatMode, Track } from "../types";
 
 const POLL_INTERVAL_MS = 500;
 const END_OF_TRACK_EPSILON_SECS = 0.75;
+const REPEAT_CYCLE: RepeatMode[] = ["off", "all", "one"];
 
 export function usePlayer(tracks: Track[]) {
   const [snapshot, setSnapshot] = useState<PlayerSnapshot | null>(null);
@@ -33,7 +25,7 @@ export function usePlayer(tracks: Track[]) {
         const next = await invoke<PlayerSnapshot>("get_position");
         const track = tracksRef.current.find((t) => t.id === next.currentTrackId);
         if (track && next.positionSecs >= track.durationSecs - END_OF_TRACK_EPSILON_SECS) {
-          const advanced = await invoke<PlayerSnapshot>("next_track");
+          const advanced = await invoke<PlayerSnapshot>("next_track", { auto: true });
           applySnapshot(advanced);
         } else {
           applySnapshot(next);
@@ -61,7 +53,7 @@ export function usePlayer(tracks: Track[]) {
   }, [applySnapshot]);
 
   const next = useCallback(async () => {
-    applySnapshot(await invoke<PlayerSnapshot>("next_track"));
+    applySnapshot(await invoke<PlayerSnapshot>("next_track", { auto: false }));
   }, [applySnapshot]);
 
   const prev = useCallback(async () => {
@@ -82,5 +74,26 @@ export function usePlayer(tracks: Track[]) {
     [applySnapshot],
   );
 
-  return { snapshot, playTrackList, togglePlayPause, next, prev, seek, setVolume };
+  const toggleShuffle = useCallback(async () => {
+    const enabled = !(snapshotRef.current?.shuffle ?? false);
+    applySnapshot(await invoke<PlayerSnapshot>("set_shuffle", { enabled }));
+  }, [applySnapshot]);
+
+  const cycleRepeat = useCallback(async () => {
+    const current = snapshotRef.current?.repeat ?? "off";
+    const nextMode = REPEAT_CYCLE[(REPEAT_CYCLE.indexOf(current) + 1) % REPEAT_CYCLE.length];
+    applySnapshot(await invoke<PlayerSnapshot>("set_repeat", { mode: nextMode }));
+  }, [applySnapshot]);
+
+  return {
+    snapshot,
+    playTrackList,
+    togglePlayPause,
+    next,
+    prev,
+    seek,
+    setVolume,
+    toggleShuffle,
+    cycleRepeat,
+  };
 }

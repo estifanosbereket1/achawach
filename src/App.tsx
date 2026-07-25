@@ -55,12 +55,14 @@ function App() {
               onRemoveRoot={library.removeRoot}
               onRescan={library.rescan}
               snapshot={player.snapshot}
-              onTrackClick={(_, index) => player.playTrackList(library.tracks, index)}
+              onTrackClick={(list, index) => player.playTrackList(list, index)}
               onTogglePlayPause={player.togglePlayPause}
               onNext={player.next}
               onPrev={player.prev}
               onSeek={player.seek}
               onVolumeChange={player.setVolume}
+              onToggleShuffle={player.toggleShuffle}
+              onCycleRepeat={player.cycleRepeat}
             />
           </div>
         ) : (

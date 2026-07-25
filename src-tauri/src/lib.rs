@@ -51,6 +51,8 @@ pub fn run() {
             player::seek,
             player::set_volume,
             player::get_position,
+            player::set_shuffle,
+            player::set_repeat,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

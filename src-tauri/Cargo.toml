@@ -27,4 +27,5 @@ tauri-plugin-store = "2.4.4"
 walkdir = "2.5.0"
 rodio = { version = "0.22.2", features = ["playback"] }
 lofty = "0.24.0"
+rand = "0.10.2"
 
