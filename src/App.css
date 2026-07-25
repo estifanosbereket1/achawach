@@ -188,8 +188,20 @@ input[type="range"] {
   border-radius: 10px;
 }
 
+.track-row {
+  cursor: pointer;
+}
+
 .track-row:hover {
   background: var(--glass-fill);
+}
+
+.track-row-active {
+  background: rgba(94, 234, 212, 0.1);
+}
+
+.track-row-active .track-title {
+  color: var(--success);
 }
 
 .track-info {
@@ -219,4 +231,52 @@ input[type="range"] {
   opacity: 0.7;
   flex-shrink: 0;
   margin-left: 12px;
+}
+
+.transport-bar {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transport-now-playing {
+  display: flex;
+  flex-direction: column;
+}
+
+.transport-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transport-progress input[type="range"] {
+  flex: 1;
+}
+
+.transport-time {
+  font-size: 12px;
+  opacity: 0.7;
+  min-width: 36px;
+}
+
+.transport-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transport-volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.transport-volume input[type="range"] {
+  width: 90px;
 }

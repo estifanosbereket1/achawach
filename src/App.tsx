@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
 import { useMusicLibrary } from "./hooks/useMusicLibrary";
+import { usePlayer } from "./hooks/usePlayer";
 import { MusicPanel } from "./panels/MusicPanel";
 import "./App.css";
 
@@ -14,6 +15,7 @@ function App() {
   const [expanded, setExpanded] = useState(false);
   const orbPosition = useRef<{ x: number; y: number } | null>(null);
   const library = useMusicLibrary();
+  const player = usePlayer(library.tracks);
 
   async function expand() {
     const win = getCurrentWindow();
@@ -52,6 +54,13 @@ function App() {
               onAddRoots={library.addRoots}
               onRemoveRoot={library.removeRoot}
               onRescan={library.rescan}
+              snapshot={player.snapshot}
+              onTrackClick={(_, index) => player.playTrackList(library.tracks, index)}
+              onTogglePlayPause={player.togglePlayPause}
+              onNext={player.next}
+              onPrev={player.prev}
+              onSeek={player.seek}
+              onVolumeChange={player.setVolume}
             />
           </div>
         ) : (
