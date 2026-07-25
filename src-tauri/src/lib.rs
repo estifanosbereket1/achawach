@@ -1,6 +1,7 @@
 mod db;
 mod equalizer;
 mod library;
+mod notifications;
 mod player;
 mod playlists;
 mod stats;
@@ -77,6 +78,7 @@ pub fn run() {
             playlists::set_playlist_tracks,
             playlists::export_playlist_m3u,
             playlists::import_playlist_m3u,
+            notifications::send_notification,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { PlayerSnapshot, RepeatMode, Track } from "../types";
+import { notifyTrackChange } from "../notifications";
 
 const POLL_INTERVAL_MS = 500;
 const END_OF_TRACK_EPSILON_SECS = 0.75;
@@ -37,13 +38,25 @@ export function usePlayer(tracks: Track[]) {
     }
   }, []);
 
+  const lastNotifiedTrackIdRef = useRef<string | null>(null);
+
+  const maybeNotifyTrackChange = useCallback((next: PlayerSnapshot) => {
+    if (!next.currentTrackId || next.currentTrackId === lastNotifiedTrackIdRef.current) return;
+    lastNotifiedTrackIdRef.current = next.currentTrackId;
+    const track = tracksRef.current.find((t) => t.id === next.currentTrackId);
+    if (track) {
+      notifyTrackChange(track).catch((err) => console.error("[notifications] failed:", err));
+    }
+  }, []);
+
   const applySnapshot = useCallback(
     (next: PlayerSnapshot) => {
       snapshotRef.current = next;
       setSnapshot(next);
       maybeRecordPlay(next);
+      maybeNotifyTrackChange(next);
     },
-    [maybeRecordPlay],
+    [maybeRecordPlay, maybeNotifyTrackChange],
   );
 
   useEffect(() => {
