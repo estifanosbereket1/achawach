@@ -1,3 +1,4 @@
+use crate::equalizer::{self, EqGains, EqSource, NUM_BANDS};
 use rand::seq::SliceRandom;
 use rodio::{Decoder, DeviceSinkBuilder, Player as RodioPlayer};
 use serde::{Deserialize, Serialize};
@@ -22,6 +23,7 @@ pub struct PlaybackState {
     volume: f32,
     shuffle: bool,
     repeat: RepeatMode,
+    eq_gains: EqGains,
 }
 
 pub struct PlayerHandle(Mutex<PlaybackState>);
@@ -40,6 +42,7 @@ impl PlayerHandle {
             volume: 1.0,
             shuffle: false,
             repeat: RepeatMode::Off,
+            eq_gains: equalizer::new_eq_gains(),
         })))
     }
 }
@@ -78,9 +81,10 @@ fn load_track(state: &mut PlaybackState, index: usize) -> Result<(), String> {
         .clone();
     let file = File::open(&path).map_err(|e| e.to_string())?;
     let decoder = Decoder::try_from(file).map_err(|e| e.to_string())?;
+    let eq_source = EqSource::new(decoder, state.eq_gains.clone());
 
     state.player.clear();
-    state.player.append(decoder);
+    state.player.append(eq_source);
     state.player.play();
     state.current_index = index;
     Ok(())
@@ -241,4 +245,19 @@ pub fn reorder_queue(
         }
     }
     Ok(snapshot(&state))
+}
+
+#[tauri::command]
+pub fn set_eq_gains(handle: State<PlayerHandle>, gains: [f32; NUM_BANDS]) -> Result<(), String> {
+    let state = handle.0.lock().map_err(|e| e.to_string())?;
+    let mut current = state.eq_gains.lock().map_err(|e| e.to_string())?;
+    *current = gains;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_eq_gains(handle: State<PlayerHandle>) -> Result<[f32; NUM_BANDS], String> {
+    let state = handle.0.lock().map_err(|e| e.to_string())?;
+    let current = state.eq_gains.lock().map_err(|e| e.to_string())?;
+    Ok(*current)
 }

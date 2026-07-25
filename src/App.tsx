@@ -6,6 +6,7 @@ import { useMusicLibrary } from "./hooks/useMusicLibrary";
 import { usePlayer } from "./hooks/usePlayer";
 import { useSettings } from "./hooks/useSettings";
 import { usePlaylists } from "./hooks/usePlaylists";
+import { useEqualizer } from "./hooks/useEqualizer";
 import { MusicPanel } from "./panels/MusicPanel";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import "./App.css";
@@ -25,6 +26,7 @@ function App() {
   const player = usePlayer(library.tracks);
   const settings = useSettings();
   const playlists = usePlaylists();
+  const equalizer = useEqualizer();
 
   useEffect(() => {
     if (settings.isLoaded) {
@@ -110,6 +112,9 @@ function App() {
                 onAddRoots={library.addRoots}
                 onRemoveRoot={library.removeRoot}
                 onRescan={library.rescan}
+                eqGains={equalizer.gains}
+                onSetEqBand={equalizer.setBand}
+                onSetEqGains={equalizer.setGains}
               />
             )}
           </div>

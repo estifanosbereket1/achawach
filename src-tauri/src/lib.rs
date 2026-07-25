@@ -1,4 +1,5 @@
 mod db;
+mod equalizer;
 mod library;
 mod player;
 mod playlists;
@@ -64,6 +65,8 @@ pub fn run() {
             player::set_repeat,
             player::jump_to_index,
             player::reorder_queue,
+            player::set_eq_gains,
+            player::get_eq_gains,
             stats::record_play,
             stats::get_monthly_play_counts,
             playlists::get_playlists,

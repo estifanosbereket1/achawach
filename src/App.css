@@ -637,6 +637,9 @@ input[type="range"] {
   flex-direction: column;
   gap: 8px;
   padding-top: 36px;
+  height: 100%;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .settings-heading {
@@ -762,4 +765,56 @@ input[type="range"] {
   align-items: center;
   gap: 8px;
   padding: 4px 12px;
+}
+
+.equalizer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eq-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.eq-bands {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 4px 4px;
+}
+
+.eq-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.eq-band-value {
+  font-size: 10px;
+  opacity: 0.7;
+  min-height: 12px;
+}
+
+.eq-slider-wrap {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eq-slider {
+  width: 90px;
+  transform: rotate(-90deg);
+}
+
+.eq-band-label {
+  font-size: 10px;
+  opacity: 0.6;
 }

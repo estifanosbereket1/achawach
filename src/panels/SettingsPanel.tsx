@@ -1,4 +1,5 @@
 import { RootChip } from "../components/RootChip";
+import { EqualizerPanel } from "./EqualizerPanel";
 
 const ACCENT_PRESETS = [
   { name: "Amber", value: "#ff9f5b" },
@@ -18,6 +19,9 @@ interface SettingsPanelProps {
   onAddRoots: () => void;
   onRemoveRoot: (root: string) => void;
   onRescan: () => void;
+  eqGains: number[];
+  onSetEqBand: (index: number, value: number) => void;
+  onSetEqGains: (gains: number[]) => void;
 }
 
 export function SettingsPanel({
@@ -30,6 +34,9 @@ export function SettingsPanel({
   onAddRoots,
   onRemoveRoot,
   onRescan,
+  eqGains,
+  onSetEqBand,
+  onSetEqGains,
 }: SettingsPanelProps) {
   return (
     <div className="settings-panel">
@@ -69,6 +76,9 @@ export function SettingsPanel({
         value={opacity}
         onChange={(e) => onOpacityChange(Number(e.currentTarget.value))}
       />
+
+      <h3 className="settings-heading">Equalizer</h3>
+      <EqualizerPanel gains={eqGains} onSetBand={onSetEqBand} onSetGains={onSetEqGains} />
     </div>
   );
 }
