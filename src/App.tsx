@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
-import { Store } from "@tauri-apps/plugin-store";
+import { useMusicLibrary } from "./hooks/useMusicLibrary";
+import { MusicPanel } from "./panels/MusicPanel";
 import "./App.css";
 
 const ORB_SIZE = 64;
@@ -12,20 +13,7 @@ const DOCK_TOP_MARGIN = 24;
 function App() {
   const [expanded, setExpanded] = useState(false);
   const orbPosition = useRef<{ x: number; y: number } | null>(null);
-  const [pluginCheck, setPluginCheck] = useState("checking...");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const store = await Store.load("plugin-check.json");
-        await store.set("ping", Date.now());
-        const value = await store.get<number>("ping");
-        setPluginCheck(value !== undefined ? `store ok (${value})` : "store returned nothing");
-      } catch (err) {
-        setPluginCheck(`store error: ${String(err)}`);
-      }
-    })();
-  }, []);
+  const library = useMusicLibrary();
 
   async function expand() {
     const win = getCurrentWindow();
@@ -57,11 +45,14 @@ function App() {
             <button className="collapse-btn" onClick={collapse}>
               ×
             </button>
-            <p className="dock-placeholder">
-              achawatch dock — player UI coming soon
-              <br />
-              <span className="mono">{pluginCheck}</span>
-            </p>
+            <MusicPanel
+              roots={library.roots}
+              tracks={library.tracks}
+              isScanning={library.isScanning}
+              onAddRoots={library.addRoots}
+              onRemoveRoot={library.removeRoot}
+              onRescan={library.rescan}
+            />
           </div>
         ) : (
           <div className="orb-dot" />

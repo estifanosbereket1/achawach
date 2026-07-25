@@ -1,3 +1,5 @@
+mod library;
+
 use tauri::menu::MenuBuilder;
 use tauri::tray::TrayIconBuilder;
 use tauri::Manager;
@@ -34,7 +36,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![library::scan_folders])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
