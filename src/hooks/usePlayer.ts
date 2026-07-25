@@ -114,6 +114,20 @@ export function usePlayer(tracks: Track[]) {
     applySnapshot(await invoke<PlayerSnapshot>("set_repeat", { mode: nextMode }));
   }, [applySnapshot]);
 
+  const jumpToIndex = useCallback(
+    async (index: number) => {
+      applySnapshot(await invoke<PlayerSnapshot>("jump_to_index", { index }));
+    },
+    [applySnapshot],
+  );
+
+  const reorderQueue = useCallback(
+    async (trackIds: string[]) => {
+      applySnapshot(await invoke<PlayerSnapshot>("reorder_queue", { trackIds }));
+    },
+    [applySnapshot],
+  );
+
   return {
     snapshot,
     playTrackList,
@@ -124,5 +138,7 @@ export function usePlayer(tracks: Track[]) {
     setVolume,
     toggleShuffle,
     cycleRepeat,
+    jumpToIndex,
+    reorderQueue,
   };
 }

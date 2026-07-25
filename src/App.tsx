@@ -88,6 +88,8 @@ function App() {
                 onVolumeChange={handleVolumeChange}
                 onToggleShuffle={player.toggleShuffle}
                 onCycleRepeat={player.cycleRepeat}
+                onJumpToIndex={player.jumpToIndex}
+                onReorderQueue={player.reorderQueue}
                 playlists={playlists.playlists}
                 onAddToPlaylist={playlists.addTrackToPlaylist}
                 onCreatePlaylistWithTrack={playlists.createPlaylistWithTrack}

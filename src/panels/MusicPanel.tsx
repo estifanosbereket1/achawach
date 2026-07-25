@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import { ListMusic, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
 import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
+import { QueueView } from "../components/QueueView";
 import { PlayNowTab } from "./PlayNowTab";
 import { TracksTab } from "./TracksTab";
 import { ArtistsTab } from "./ArtistsTab";
@@ -36,6 +37,8 @@ interface MusicPanelProps extends PlaylistActions {
   onVolumeChange: (volume: number) => void;
   onToggleShuffle: () => void;
   onCycleRepeat: () => void;
+  onJumpToIndex: (index: number) => void;
+  onReorderQueue: (trackIds: string[]) => void;
   onCreatePlaylist: (name: string) => Promise<number>;
   onRenamePlaylist: (playlistId: number, name: string) => void;
   onDeletePlaylist: (playlistId: number, name: string) => void;
@@ -54,6 +57,8 @@ export function MusicPanel({
   onVolumeChange,
   onToggleShuffle,
   onCycleRepeat,
+  onJumpToIndex,
+  onReorderQueue,
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
@@ -64,8 +69,14 @@ export function MusicPanel({
   setPlaylistTracks,
 }: MusicPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
+  const [showQueue, setShowQueue] = useState(false);
   const groups = useLibraryGroups(tracks);
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
+
+  function selectTab(tab: LibraryTab) {
+    setShowQueue(false);
+    setActiveTab(tab);
+  }
 
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
@@ -77,8 +88,8 @@ export function MusicPanel({
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            className={`pill-button ${activeTab === tab.id ? "icon-button-active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
+            className={`pill-button ${!showQueue && activeTab === tab.id ? "icon-button-active" : ""}`}
+            onClick={() => selectTab(tab.id)}
           >
             {tab.label}
           </button>
@@ -86,6 +97,17 @@ export function MusicPanel({
       </div>
 
       <div className="library-tab-content">
+        {showQueue ? (
+          <QueueView
+            tracks={tracks}
+            queueTrackIds={snapshot?.queue ?? []}
+            currentIndex={snapshot?.currentIndex ?? 0}
+            onJumpToIndex={onJumpToIndex}
+            onReorder={onReorderQueue}
+            onClose={() => setShowQueue(false)}
+          />
+        ) : (
+          <>
         {activeTab === "playnow" && (
           <PlayNowTab
             tracks={tracks}
@@ -137,6 +159,8 @@ export function MusicPanel({
             setPlaylistTracks={setPlaylistTracks}
             {...playlistProps}
           />
+        )}
+          </>
         )}
       </div>
 
@@ -201,6 +225,14 @@ export function MusicPanel({
             title={`Repeat: ${snapshot?.repeat ?? "off"}`}
           >
             {snapshot?.repeat === "one" ? <Repeat1 size={ICON_SIZE} /> : <Repeat size={ICON_SIZE} />}
+          </button>
+          <button
+            className={`icon-button ${showQueue ? "icon-button-active" : ""}`}
+            onClick={() => setShowQueue((v) => !v)}
+            aria-label="Up next"
+            title="Up next"
+          >
+            <ListMusic size={ICON_SIZE} />
           </button>
           <div className="transport-volume">
             <span>Vol</span>

@@ -62,6 +62,8 @@ pub fn run() {
             player::get_position,
             player::set_shuffle,
             player::set_repeat,
+            player::jump_to_index,
+            player::reorder_queue,
             stats::record_play,
             stats::get_monthly_play_counts,
             playlists::get_playlists,

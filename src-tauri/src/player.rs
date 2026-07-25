@@ -214,3 +214,31 @@ pub fn set_repeat(handle: State<PlayerHandle>, mode: RepeatMode) -> Result<Playe
     state.repeat = mode;
     Ok(snapshot(&state))
 }
+
+/// Jumps directly to a track already in the current queue (e.g. clicking it
+/// in the "Up Next" view), without touching queue order or shuffle state.
+#[tauri::command]
+pub fn jump_to_index(handle: State<PlayerHandle>, index: usize) -> Result<PlayerSnapshot, String> {
+    let mut state = handle.0.lock().map_err(|e| e.to_string())?;
+    load_track(&mut state, index)?;
+    Ok(snapshot(&state))
+}
+
+/// Replaces the queue order (e.g. after a drag/up-down reorder in the "Up
+/// Next" view) without interrupting playback — re-locates the currently
+/// playing track by id in the new order rather than reloading it.
+#[tauri::command]
+pub fn reorder_queue(
+    handle: State<PlayerHandle>,
+    track_ids: Vec<String>,
+) -> Result<PlayerSnapshot, String> {
+    let mut state = handle.0.lock().map_err(|e| e.to_string())?;
+    let current_track_id = state.queue.get(state.current_index).cloned();
+    state.queue = track_ids;
+    if let Some(id) = current_track_id {
+        if let Some(new_index) = state.queue.iter().position(|t| *t == id) {
+            state.current_index = new_index;
+        }
+    }
+    Ok(snapshot(&state))
+}
