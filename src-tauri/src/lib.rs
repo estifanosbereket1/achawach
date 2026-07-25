@@ -2,6 +2,7 @@ mod db;
 mod equalizer;
 mod library;
 mod lyrics;
+mod mpris;
 mod notifications;
 mod player;
 mod playlists;
@@ -29,6 +30,14 @@ pub fn run() {
             app.manage(pool);
 
             app.manage(watcher::WatcherHandle::new());
+
+            let mpris_app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                if let Some(handle) = mpris::init(&mpris_app_handle).await {
+                    mpris_app_handle.manage(handle);
+                    mpris::run_property_poller(mpris_app_handle).await;
+                }
+            });
 
             let menu = MenuBuilder::new(app)
                 .text("show", "Show")

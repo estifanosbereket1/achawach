@@ -178,6 +178,23 @@ pub async fn get_library(pool: State<'_, SqlitePool>) -> Result<Vec<Track>, Stri
     fetch_library(pool.inner()).await
 }
 
+pub async fn fetch_track_by_path(pool: &SqlitePool, path: &str) -> Result<Option<Track>, String> {
+    let row = sqlx::query(
+        "SELECT path, title, artist, album, genre, duration_secs, artwork_path, track_number,
+                date_added, play_count, last_played
+         FROM tracks WHERE path = ?",
+    )
+    .bind(path)
+    .fetch_optional(pool)
+    .await
+    .map_err(|e| e.to_string())?;
+
+    row.as_ref()
+        .map(row_to_track)
+        .transpose()
+        .map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 pub async fn scan_folders(
     app: tauri::AppHandle,
