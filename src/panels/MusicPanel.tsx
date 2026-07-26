@@ -98,7 +98,11 @@ export function MusicPanel({
   const [overlay, setOverlay] = useState<"none" | "queue" | "lyrics">("none");
   const [pendingNav, setPendingNav] = useState<{ tab: "albums" | "artists"; key: string } | null>(null);
   const groups = useLibraryGroups(tracks);
-  const pinnedAlbums = usePinnedAlbums();
+  const pinnedAlbumsHook = usePinnedAlbums();
+  const resolvedPinnedAlbums = [...pinnedAlbumsHook.pinnedKeys]
+    .reverse()
+    .map((key) => groups.albums.find((a) => `${a.name} ${a.artist}` === key))
+    .filter((a): a is (typeof groups.albums)[number] => a !== undefined);
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
   const trackActionsProps: TrackActions = useTrackActions({
     tracks,
@@ -176,6 +180,9 @@ export function MusicPanel({
             {...playlistProps}
             {...trackActionsProps}
             {...trackNavProps}
+            pinnedAlbums={resolvedPinnedAlbums}
+            isAlbumPinned={pinnedAlbumsHook.isPinned}
+            onTogglePin={pinnedAlbumsHook.togglePin}
           />
         )}
         {activeTab === "tracks" && (
@@ -210,8 +217,8 @@ export function MusicPanel({
             {...trackNavProps}
             navigateToKey={pendingNav?.tab === "albums" ? pendingNav.key : undefined}
             onConsumeNavigate={() => setPendingNav(null)}
-            isAlbumPinned={pinnedAlbums.isPinned}
-            onTogglePin={pinnedAlbums.togglePin}
+            isAlbumPinned={pinnedAlbumsHook.isPinned}
+            onTogglePin={pinnedAlbumsHook.togglePin}
           />
         )}
         {activeTab === "genres" && (

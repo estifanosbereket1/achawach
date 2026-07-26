@@ -3,6 +3,7 @@ import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../t
 import { useLibraryGroups, type ArtistGroup, type AlbumGroup } from "../hooks/useLibraryGroups";
 import { useMonthlyPlayCounts } from "../hooks/useMonthlyPlayCounts";
 import { GridCard } from "../components/GridCard";
+import type { ContextMenuItem } from "../components/ContextMenu";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { TrackSectionPage } from "../components/TrackSectionPage";
 import { SectionHeader } from "../components/SectionHeader";
@@ -14,6 +15,7 @@ type PlayNowView =
   | { type: "artists-full" }
   | { type: "albums-full" }
   | { type: "recent-full" }
+  | { type: "pinned-full" }
   | { type: "most-played-full" }
   | { type: "recently-played-full" }
   | { type: "instant-mix-full" }
@@ -25,6 +27,7 @@ type PlayNowView =
 const POPULAR_ARTISTS_PREVIEW = 3;
 const POPULAR_ALBUMS_PREVIEW = 5;
 const RECENTLY_ADDED_PREVIEW = 6;
+const PINNED_PREVIEW = 6;
 const TRACK_SECTION_PREVIEW = 6;
 const INSTANT_MIX_POOL_SIZE = 30;
 
@@ -32,6 +35,31 @@ interface PlayNowTabProps extends PlaylistActions, TrackActions, TrackNavigation
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
+  pinnedAlbums: AlbumGroup[];
+  isAlbumPinned: (key: string) => boolean;
+  onTogglePin: (key: string) => void;
+}
+
+function albumMenuItems(
+  album: AlbumGroup,
+  actions: {
+    onPlayList: (list: Track[], index: number) => void;
+    onPlayNext: (trackIds: string[]) => void;
+    onQueue: (trackIds: string[]) => void;
+    onAddToFavorites: (trackIds: string[]) => void;
+    isAlbumPinned: (key: string) => boolean;
+    onTogglePin: (key: string) => void;
+  },
+): ContextMenuItem[] {
+  const key = `${album.name} ${album.artist}`;
+  const trackIds = album.tracks.map((t) => t.id);
+  return [
+    { label: "Play Now", onSelect: () => actions.onPlayList(album.tracks, 0) },
+    { label: "Play Next", onSelect: () => actions.onPlayNext(trackIds) },
+    { label: "Queue", onSelect: () => actions.onQueue(trackIds) },
+    { label: "Add to Favs", onSelect: () => actions.onAddToFavorites(trackIds) },
+    { label: actions.isAlbumPinned(key) ? "Unpin" : "Pin", onSelect: () => actions.onTogglePin(key) },
+  ];
 }
 
 interface TrackPreviewSectionProps {
@@ -84,6 +112,9 @@ export function PlayNowTab({
   onAddToFavorites,
   onNavigateToAlbum,
   onNavigateToArtist,
+  pinnedAlbums,
+  isAlbumPinned,
+  onTogglePin,
 }: PlayNowTabProps) {
   const groups = useLibraryGroups(tracks);
   const monthlyPlayCounts = useMonthlyPlayCounts();
@@ -211,8 +242,51 @@ export function PlayNowTab({
                   subtitle={album.artist}
                   artworkPath={album.artworkPath}
                   onClick={() => setView({ type: "album", album })}
+                  contextMenuItems={albumMenuItems(album, {
+                    onPlayList,
+                    onPlayNext,
+                    onQueue,
+                    onAddToFavorites,
+                    isAlbumPinned,
+                    onTogglePin,
+                  })}
                 />
               ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (view.type === "pinned-full") {
+    const allTracks = pinnedAlbums.flatMap((a) => a.tracks);
+    return (
+      <div className="tab-panel">
+        <SectionHeader
+          title="Pinned"
+          mode="full"
+          onNavigate={goToDashboard}
+          onPlay={() => onPlayList(allTracks, 0)}
+          onShufflePlay={() => onPlayList(shuffleArray(allTracks), 0)}
+          disabled={allTracks.length === 0}
+        />
+        <div className="grid-view">
+          {pinnedAlbums.map((album) => (
+            <GridCard
+              key={`${album.name} ${album.artist}`}
+              title={album.name}
+              subtitle={album.artist}
+              artworkPath={album.artworkPath}
+              onClick={() => setView({ type: "album", album })}
+              contextMenuItems={albumMenuItems(album, {
+                onPlayList,
+                onPlayNext,
+                onQueue,
+                onAddToFavorites,
+                isAlbumPinned,
+                onTogglePin,
+              })}
+            />
+          ))}
         </div>
       </div>
     );
@@ -308,6 +382,37 @@ export function PlayNowTab({
 
   return (
     <div className="pn-dashboard">
+      {pinnedAlbums.length > 0 && (
+        <div className="pn-section">
+          <SectionHeader
+            title="Pinned"
+            mode="preview"
+            onNavigate={() => setView({ type: "pinned-full" })}
+            onPlay={() => onPlayList(pinnedAlbums.flatMap((a) => a.tracks), 0)}
+            onShufflePlay={() => onPlayList(shuffleArray(pinnedAlbums.flatMap((a) => a.tracks)), 0)}
+          />
+          <div className="grid-view">
+            {pinnedAlbums.slice(0, PINNED_PREVIEW).map((album) => (
+              <GridCard
+                key={`${album.name} ${album.artist}`}
+                title={album.name}
+                subtitle={album.artist}
+                artworkPath={album.artworkPath}
+                onClick={() => setView({ type: "album", album })}
+                contextMenuItems={albumMenuItems(album, {
+                  onPlayList,
+                  onPlayNext,
+                  onQueue,
+                  onAddToFavorites,
+                  isAlbumPinned,
+                  onTogglePin,
+                })}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="pn-section">
         <SectionHeader
           title="Popular Artists"
@@ -347,6 +452,14 @@ export function PlayNowTab({
               subtitle={album.artist}
               artworkPath={album.artworkPath}
               onClick={() => setView({ type: "album", album })}
+              contextMenuItems={albumMenuItems(album, {
+                onPlayList,
+                onPlayNext,
+                onQueue,
+                onAddToFavorites,
+                isAlbumPinned,
+                onTogglePin,
+              })}
             />
           ))}
         </div>
@@ -369,6 +482,14 @@ export function PlayNowTab({
               subtitle={album.artist}
               artworkPath={album.artworkPath}
               onClick={() => setView({ type: "album", album })}
+              contextMenuItems={albumMenuItems(album, {
+                onPlayList,
+                onPlayNext,
+                onQueue,
+                onAddToFavorites,
+                isAlbumPinned,
+                onTogglePin,
+              })}
             />
           ))}
         </div>
