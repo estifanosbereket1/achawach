@@ -81,15 +81,24 @@ export function ArtistsTab({
         <p className="track-list-empty">No artists yet.</p>
       ) : (
         <div className="grid-view">
-          {artists.map((artist) => (
-            <GridCard
-              key={artist.name}
-              title={artist.name}
-              subtitle={`${artist.trackCount} track${artist.trackCount === 1 ? "" : "s"}`}
-              artworkPath={artist.artworkPath}
-              onClick={() => setSelected(artist)}
-            />
-          ))}
+          {artists.map((artist) => {
+            const trackIds = artist.tracks.map((t) => t.id);
+            return (
+              <GridCard
+                key={artist.name}
+                title={artist.name}
+                subtitle={`${artist.trackCount} track${artist.trackCount === 1 ? "" : "s"}`}
+                artworkPath={artist.artworkPath}
+                onClick={() => setSelected(artist)}
+                contextMenuItems={[
+                  { label: "Play Now", onSelect: () => onPlayList(artist.tracks, 0) },
+                  { label: "Play Next", onSelect: () => onPlayNext(trackIds) },
+                  { label: "Queue", onSelect: () => onQueue(trackIds) },
+                  { label: "Add to Favs", onSelect: () => onAddToFavorites(trackIds) },
+                ]}
+              />
+            );
+          })}
         </div>
       )}
     </div>
