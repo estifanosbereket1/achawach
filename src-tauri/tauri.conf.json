@@ -49,7 +49,8 @@
     "longDescription": "achawatch is a glassmorphic tray music player for Linux. It scans your own music folders into a local library with cached artwork, and plays everything through a native Rust audio pipeline with queue/shuffle/repeat, a 10-band equalizer, playlists with M3U import/export, play stats, a sleep timer, synced lyrics, folder auto-watch, desktop notifications, and MPRIS media-key support.",
     "linux": {
       "deb": {
-        "section": "sound"
+        "section": "sound",
+        "depends": ["libasound2t64 | libasound2"]
       }
     }
   }
