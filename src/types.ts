@@ -31,6 +31,11 @@ export interface TrackActions {
   onAddToFavorites: (trackIds: string[]) => void;
 }
 
+export interface TrackNavigation {
+  onNavigateToAlbum: (track: Track) => void;
+  onNavigateToArtist: (track: Track) => void;
+}
+
 export type RepeatMode = "off" | "all" | "one";
 
 export interface PlayerSnapshot {

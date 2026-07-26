@@ -1,9 +1,9 @@
-import type { PlaylistActions, Track, TrackActions } from "../types";
+import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import { TrackRows } from "./TrackRows";
 import { SectionHeader } from "./SectionHeader";
 import { shuffleArray } from "../utils";
 
-interface TrackSectionPageProps extends PlaylistActions, TrackActions {
+interface TrackSectionPageProps extends PlaylistActions, TrackActions, TrackNavigation {
   title: string;
   tracks: Track[];
   currentTrackId: string | null;
@@ -23,6 +23,8 @@ export function TrackSectionPage({
   onPlayNext,
   onQueue,
   onAddToFavorites,
+  onNavigateToAlbum,
+  onNavigateToArtist,
 }: TrackSectionPageProps) {
   return (
     <div className="tab-panel">
@@ -47,6 +49,8 @@ export function TrackSectionPage({
           onPlayNext={onPlayNext}
           onQueue={onQueue}
           onAddToFavorites={onAddToFavorites}
+          onNavigateToAlbum={onNavigateToAlbum}
+          onNavigateToArtist={onNavigateToArtist}
         />
       )}
     </div>

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ShuffleIcon } from "@phosphor-icons/react";
 import type { GenreGroup } from "../hooks/useLibraryGroups";
-import type { PlaylistActions, Track, TrackActions } from "../types";
+import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { getGenreIcon } from "../genreIcons";
 import { shuffleArray } from "../utils";
 
-interface GenresTabProps extends PlaylistActions, TrackActions {
+interface GenresTabProps extends PlaylistActions, TrackActions, TrackNavigation {
   genres: GenreGroup[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -22,6 +22,8 @@ export function GenresTab({
   onPlayNext,
   onQueue,
   onAddToFavorites,
+  onNavigateToAlbum,
+  onNavigateToArtist,
 }: GenresTabProps) {
   const [selected, setSelected] = useState<GenreGroup | null>(null);
   const allTracks = genres.flatMap((g) => g.tracks);
@@ -42,6 +44,8 @@ export function GenresTab({
         onPlayNext={onPlayNext}
         onQueue={onQueue}
         onAddToFavorites={onAddToFavorites}
+        onNavigateToAlbum={onNavigateToAlbum}
+        onNavigateToArtist={onNavigateToArtist}
       />
     );
   }

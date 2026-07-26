@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShuffleIcon } from "@phosphor-icons/react";
 import type { AlbumGroup } from "../hooks/useLibraryGroups";
-import type { PlaylistActions, Track, TrackActions } from "../types";
+import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import { GridCard } from "../components/GridCard";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { shuffleArray } from "../utils";
 
-interface AlbumsTabProps extends PlaylistActions, TrackActions {
+interface AlbumsTabProps extends PlaylistActions, TrackActions, TrackNavigation {
   albums: AlbumGroup[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
+  navigateToKey?: string;
+  onConsumeNavigate: () => void;
 }
 
 export function AlbumsTab({
@@ -22,9 +24,20 @@ export function AlbumsTab({
   onPlayNext,
   onQueue,
   onAddToFavorites,
+  onNavigateToAlbum,
+  onNavigateToArtist,
+  navigateToKey,
+  onConsumeNavigate,
 }: AlbumsTabProps) {
   const [selected, setSelected] = useState<AlbumGroup | null>(null);
   const allTracks = albums.flatMap((a) => a.tracks);
+
+  useEffect(() => {
+    if (!navigateToKey) return;
+    const match = albums.find((a) => `${a.name} ${a.artist}` === navigateToKey);
+    if (match) setSelected(match);
+    onConsumeNavigate();
+  }, [navigateToKey, albums, onConsumeNavigate]);
 
   if (selected) {
     return (
@@ -42,6 +55,8 @@ export function AlbumsTab({
         onPlayNext={onPlayNext}
         onQueue={onQueue}
         onAddToFavorites={onAddToFavorites}
+        onNavigateToAlbum={onNavigateToAlbum}
+        onNavigateToArtist={onNavigateToArtist}
       />
     );
   }

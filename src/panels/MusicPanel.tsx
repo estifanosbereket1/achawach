@@ -10,7 +10,7 @@ import {
   SkipBackIcon,
   SkipForwardIcon,
 } from "@phosphor-icons/react";
-import type { PlayerSnapshot, PlaylistActions, Track, TrackActions } from "../types";
+import type { PlayerSnapshot, PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { useLyrics } from "../hooks/useLyrics";
@@ -95,6 +95,7 @@ export function MusicPanel({
 }: MusicPanelProps) {
   const [activeTab, setActiveTab] = useState<LibraryTab>("playnow");
   const [overlay, setOverlay] = useState<"none" | "queue" | "lyrics">("none");
+  const [pendingNav, setPendingNav] = useState<{ tab: "albums" | "artists"; key: string } | null>(null);
   const groups = useLibraryGroups(tracks);
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
   const trackActionsProps: TrackActions = useTrackActions({
@@ -112,6 +113,19 @@ export function MusicPanel({
     setOverlay("none");
     setActiveTab(tab);
   }
+
+  const trackNavProps: TrackNavigation = {
+    onNavigateToAlbum: (track) => {
+      setOverlay("none");
+      setActiveTab("albums");
+      setPendingNav({ tab: "albums", key: `${track.album} ${track.artist}` });
+    },
+    onNavigateToArtist: (track) => {
+      setOverlay("none");
+      setActiveTab("artists");
+      setPendingNav({ tab: "artists", key: track.artist });
+    },
+  };
 
   const currentTrack = tracks.find((t) => t.id === snapshot?.currentTrackId) ?? null;
   const position = snapshot?.positionSecs ?? 0;
@@ -159,6 +173,7 @@ export function MusicPanel({
             onPlayList={onPlayList}
             {...playlistProps}
             {...trackActionsProps}
+            {...trackNavProps}
           />
         )}
         {activeTab === "tracks" && (
@@ -168,6 +183,7 @@ export function MusicPanel({
             onPlayList={onPlayList}
             {...playlistProps}
             {...trackActionsProps}
+            {...trackNavProps}
           />
         )}
         {activeTab === "artists" && (
@@ -177,6 +193,9 @@ export function MusicPanel({
             onPlayList={onPlayList}
             {...playlistProps}
             {...trackActionsProps}
+            {...trackNavProps}
+            navigateToKey={pendingNav?.tab === "artists" ? pendingNav.key : undefined}
+            onConsumeNavigate={() => setPendingNav(null)}
           />
         )}
         {activeTab === "albums" && (
@@ -186,6 +205,9 @@ export function MusicPanel({
             onPlayList={onPlayList}
             {...playlistProps}
             {...trackActionsProps}
+            {...trackNavProps}
+            navigateToKey={pendingNav?.tab === "albums" ? pendingNav.key : undefined}
+            onConsumeNavigate={() => setPendingNav(null)}
           />
         )}
         {activeTab === "genres" && (
@@ -195,6 +217,7 @@ export function MusicPanel({
             onPlayList={onPlayList}
             {...playlistProps}
             {...trackActionsProps}
+            {...trackNavProps}
           />
         )}
         {activeTab === "playlists" && (

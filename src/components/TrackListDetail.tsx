@@ -1,12 +1,12 @@
 import { ArrowLeftIcon, MusicNoteIcon, PlayIcon, ShuffleIcon } from "@phosphor-icons/react";
-import type { PlaylistActions, Track, TrackActions } from "../types";
+import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import { Thumbnail } from "./Thumbnail";
 import { TrackRows } from "./TrackRows";
 import { shuffleArray } from "../utils";
 
 type IconComponent = typeof MusicNoteIcon;
 
-interface TrackListDetailProps extends PlaylistActions, TrackActions {
+interface TrackListDetailProps extends PlaylistActions, TrackActions, TrackNavigation {
   title: string;
   subtitle?: string;
   artworkPath: string | null;
@@ -32,6 +32,8 @@ export function TrackListDetail({
   onPlayNext,
   onQueue,
   onAddToFavorites,
+  onNavigateToAlbum,
+  onNavigateToArtist,
 }: TrackListDetailProps) {
   return (
     <div className="detail-view">
@@ -80,6 +82,8 @@ export function TrackListDetail({
         onPlayNext={onPlayNext}
         onQueue={onQueue}
         onAddToFavorites={onAddToFavorites}
+        onNavigateToAlbum={onNavigateToAlbum}
+        onNavigateToArtist={onNavigateToArtist}
       />
     </div>
   );

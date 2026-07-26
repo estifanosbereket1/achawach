@@ -1,11 +1,11 @@
-import type { PlaylistActions, Track, TrackActions } from "../types";
+import type { PlaylistActions, Track, TrackActions, TrackNavigation } from "../types";
 import { Thumbnail } from "./Thumbnail";
 import { AddToPlaylistMenu } from "./AddToPlaylistMenu";
 import { ContextMenu } from "./ContextMenu";
 import { useContextMenu } from "../hooks/useContextMenu";
 import { formatTime } from "../utils";
 
-interface TrackRowsProps extends PlaylistActions, TrackActions {
+interface TrackRowsProps extends PlaylistActions, TrackActions, TrackNavigation {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -23,6 +23,8 @@ function TrackRow({
   onPlayNext,
   onQueue,
   onAddToFavorites,
+  onNavigateToAlbum,
+  onNavigateToArtist,
 }: {
   track: Track;
   index: number;
@@ -57,6 +59,8 @@ function TrackRow({
           { label: "Play Next", onSelect: () => onPlayNext([track.id]) },
           { label: "Queue", onSelect: () => onQueue([track.id]) },
           { label: "Add to Favs", onSelect: () => onAddToFavorites([track.id]) },
+          { label: "Album", onSelect: () => onNavigateToAlbum(track) },
+          { label: "Artist", onSelect: () => onNavigateToArtist(track) },
         ]}
       />
     </div>
