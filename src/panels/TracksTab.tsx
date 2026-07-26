@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Shuffle } from "lucide-react";
+import { ShuffleIcon } from "@phosphor-icons/react";
 import type { PlaylistActions, Track } from "../types";
 import { TrackRows } from "../components/TrackRows";
 import { shuffleArray } from "../utils";
@@ -82,7 +82,7 @@ export function TracksTab({
           aria-label="Shuffle play all"
           title="Shuffle play all"
         >
-          <Shuffle size={16} />
+          <ShuffleIcon size={16} />
         </button>
       </div>
 

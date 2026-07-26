@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ListPlus, Plus } from "lucide-react";
+import { ListPlusIcon, PlusIcon } from "@phosphor-icons/react";
 import type { PlaylistActions, Track } from "../types";
 import { Dropdown } from "./Dropdown";
 
@@ -23,7 +23,7 @@ export function AddToPlaylistMenu({
       direction={direction}
       trigger={
         <button className="icon-button" aria-label="Add to playlist" title="Add to playlist">
-          <ListPlus size={16} />
+          <ListPlusIcon size={16} />
         </button>
       }
     >
@@ -72,7 +72,7 @@ export function AddToPlaylistMenu({
               }}
               aria-label="Create playlist"
             >
-              <Plus size={14} />
+              <PlusIcon size={14} />
             </button>
           </div>
         </>

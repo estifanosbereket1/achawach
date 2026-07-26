@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shuffle } from "lucide-react";
+import { ShuffleIcon } from "@phosphor-icons/react";
 import type { GenreGroup } from "../hooks/useLibraryGroups";
 import type { PlaylistActions, Track } from "../types";
 import { TrackListDetail } from "../components/TrackListDetail";
@@ -53,7 +53,7 @@ export function GenresTab({
           aria-label="Shuffle play all"
           title="Shuffle play all"
         >
-          <Shuffle size={16} />
+          <ShuffleIcon size={16} />
         </button>
       </div>
 

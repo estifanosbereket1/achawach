@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { CaretDownIcon, CaretUpIcon, XIcon } from "@phosphor-icons/react";
 import type { Track } from "../types";
 import { Thumbnail } from "./Thumbnail";
 import { formatTime } from "../utils";
@@ -42,7 +42,7 @@ export function QueueView({
       <div className="pn-section-header">
         <span className="pn-section-title">Up Next</span>
         <button className="icon-button" onClick={onClose} aria-label="Close queue">
-          <X size={16} />
+          <XIcon size={16} />
         </button>
       </div>
 
@@ -74,7 +74,7 @@ export function QueueView({
                       disabled={index === currentIndex + 1}
                       aria-label="Move up"
                     >
-                      <ChevronUp size={14} />
+                      <CaretUpIcon size={14} />
                     </button>
                     <button
                       className="icon-button"
@@ -82,7 +82,7 @@ export function QueueView({
                       disabled={index === queueTrackIds.length - 1}
                       aria-label="Move down"
                     >
-                      <ChevronDown size={14} />
+                      <CaretDownIcon size={14} />
                     </button>
                   </div>
                 )}

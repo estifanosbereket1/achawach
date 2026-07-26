@@ -1,5 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, FileDown, FileUp, Pencil, Plus, Trash2, X } from "lucide-react";
+import {
+  CaretDownIcon,
+  CaretUpIcon,
+  FileArrowDownIcon,
+  FileArrowUpIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+  TrashIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import type { PlaylistActions, PlaylistSummary, Track } from "../types";
 import type { ImportResult } from "../hooks/usePlaylists";
 import { Thumbnail } from "../components/Thumbnail";
@@ -104,7 +113,7 @@ function PlaylistDetail({
                   disabled={index === 0}
                   aria-label="Move up"
                 >
-                  <ChevronUp size={14} />
+                  <CaretUpIcon size={14} />
                 </button>
                 <button
                   className="icon-button"
@@ -112,10 +121,10 @@ function PlaylistDetail({
                   disabled={index === tracks.length - 1}
                   aria-label="Move down"
                 >
-                  <ChevronDown size={14} />
+                  <CaretDownIcon size={14} />
                 </button>
                 <button className="icon-button" onClick={() => removeTrack(index)} aria-label="Remove from playlist">
-                  <X size={14} />
+                  <XIcon size={14} />
                 </button>
               </div>
             </div>
@@ -189,10 +198,10 @@ export function PlaylistsTab({
           }}
           aria-label="Create playlist"
         >
-          <Plus size={16} />
+          <PlusIcon size={16} />
         </button>
         <button className="icon-button" onClick={handleImport} aria-label="Import M3U playlist" title="Import M3U">
-          <FileUp size={16} />
+          <FileArrowUpIcon size={16} />
         </button>
       </div>
 
@@ -232,7 +241,7 @@ export function PlaylistsTab({
                   }}
                   aria-label="Confirm rename"
                 >
-                  <Plus size={14} />
+                  <PlusIcon size={14} />
                 </button>
               </div>
             ) : (
@@ -248,7 +257,7 @@ export function PlaylistsTab({
                     aria-label="Export as M3U"
                     title="Export as M3U"
                   >
-                    <FileDown size={14} />
+                    <FileArrowDownIcon size={14} />
                   </button>
                   <button
                     className="icon-button"
@@ -258,14 +267,14 @@ export function PlaylistsTab({
                     }}
                     aria-label="Rename playlist"
                   >
-                    <Pencil size={14} />
+                    <PencilSimpleIcon size={14} />
                   </button>
                   <button
                     className="icon-button"
                     onClick={() => onDeletePlaylist(playlist.id, playlist.name)}
                     aria-label="Delete playlist"
                   >
-                    <Trash2 size={14} />
+                    <TrashIcon size={14} />
                   </button>
                 </div>
               </div>

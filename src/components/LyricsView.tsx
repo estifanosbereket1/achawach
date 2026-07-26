@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { X } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react";
 import type { LyricsData } from "../hooks/useLyrics";
 
 interface LyricsViewProps {
@@ -32,7 +32,7 @@ export function LyricsView({ title, lyrics, loading, positionSecs, onClose }: Ly
       <div className="pn-section-header">
         <span className="pn-section-title">{title} — Lyrics</span>
         <button className="icon-button" onClick={onClose} aria-label="Close lyrics">
-          <X size={16} />
+          <XIcon size={16} />
         </button>
       </div>
 

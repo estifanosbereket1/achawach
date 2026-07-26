@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Store } from "@tauri-apps/plugin-store";
 
 const STORE_PATH = "settings.json";
-const DEFAULT_ACCENT = "#ff9f5b";
+const DEFAULT_ACCENT = "#f7803c";
 const DEFAULT_OPACITY = 0.55;
 const DEFAULT_VOLUME = 1;
 

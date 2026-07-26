@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
-import { Settings } from "lucide-react";
+import { GearIcon } from "@phosphor-icons/react";
 import { useMusicLibrary } from "./hooks/useMusicLibrary";
 import { usePlayer } from "./hooks/usePlayer";
 import { useSettings } from "./hooks/useSettings";
@@ -81,7 +81,7 @@ function App() {
               onClick={() => setPanel(panel === "music" ? "settings" : "music")}
               aria-label="Settings"
             >
-              <Settings size={16} />
+              <GearIcon size={16} />
             </button>
 
             {panel === "music" ? (

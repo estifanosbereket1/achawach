@@ -1,10 +1,10 @@
-import { ArrowLeft, Music, Play, Shuffle } from "lucide-react";
+import { ArrowLeftIcon, MusicNoteIcon, PlayIcon, ShuffleIcon } from "@phosphor-icons/react";
 import type { PlaylistActions, Track } from "../types";
 import { Thumbnail } from "./Thumbnail";
 import { TrackRows } from "./TrackRows";
 import { shuffleArray } from "../utils";
 
-type IconComponent = typeof Music;
+type IconComponent = typeof MusicNoteIcon;
 
 interface TrackListDetailProps extends PlaylistActions {
   title: string;
@@ -33,7 +33,7 @@ export function TrackListDetail({
   return (
     <div className="detail-view">
       <button className="icon-button" onClick={onBack} aria-label="Back">
-        <ArrowLeft size={16} />
+        <ArrowLeftIcon size={16} />
       </button>
 
       <div className="detail-header">
@@ -53,7 +53,7 @@ export function TrackListDetail({
             aria-label="Play"
             title="Play"
           >
-            <Play size={16} />
+            <PlayIcon size={16} />
           </button>
           <button
             className="icon-button"
@@ -62,7 +62,7 @@ export function TrackListDetail({
             aria-label="Shuffle play"
             title="Shuffle play"
           >
-            <Shuffle size={16} />
+            <ShuffleIcon size={16} />
           </button>
         </div>
       </div>

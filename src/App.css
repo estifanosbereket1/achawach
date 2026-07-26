@@ -1,13 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 :root {
-  --accent: #ff9f5b;
+  --accent: #f7803c;
   --dock-opacity: 0.55;
-  --surface: #0b0d12;
+  --surface: #2e0d23;
   --glass-fill: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.12);
   --success: #5eead4;
-  --danger: #f87171;
+  --danger: #f54828;
+  --icon-idle: #f8e4c1;
 }
 
 html,
@@ -97,7 +98,7 @@ body {
   border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
-  color: #f0f0f0;
+  color: var(--icon-idle);
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
@@ -116,7 +117,7 @@ input[type="range"] {
   border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
-  color: #f0f0f0;
+  color: var(--icon-idle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -331,7 +332,7 @@ input[type="range"] {
   gap: 4px;
   background: none;
   border: none;
-  color: #f0f0f0;
+  color: var(--icon-idle);
   font-size: 14px;
   font-weight: 600;
   padding: 0;
@@ -446,7 +447,7 @@ input[type="range"] {
   border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: var(--glass-fill);
-  color: #f0f0f0;
+  color: var(--icon-idle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -715,7 +716,7 @@ input[type="range"] {
   border-radius: 6px;
   border: none;
   background: none;
-  color: #f0f0f0;
+  color: var(--icon-idle);
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;

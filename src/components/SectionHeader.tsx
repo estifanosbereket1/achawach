@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronRight, Play, Shuffle } from "lucide-react";
+import { ArrowLeftIcon, CaretRightIcon, PlayIcon, ShuffleIcon } from "@phosphor-icons/react";
 
 interface SectionHeaderProps {
   title: string;
@@ -20,9 +20,9 @@ export function SectionHeader({
   return (
     <div className="pn-section-header">
       <button className="pn-section-title" onClick={onNavigate}>
-        {mode === "full" && <ArrowLeft size={16} />}
+        {mode === "full" && <ArrowLeftIcon size={16} />}
         <span>{title}</span>
-        {mode === "preview" && <ChevronRight size={16} />}
+        {mode === "preview" && <CaretRightIcon size={16} />}
       </button>
       <div className="pn-section-actions">
         <button
@@ -32,7 +32,7 @@ export function SectionHeader({
           aria-label={`Play ${title}`}
           title="Play"
         >
-          <Play size={14} />
+          <PlayIcon size={14} />
         </button>
         <button
           className="icon-button"
@@ -41,7 +41,7 @@ export function SectionHeader({
           aria-label={`Shuffle play ${title}`}
           title="Shuffle play"
         >
-          <Shuffle size={14} />
+          <ShuffleIcon size={14} />
         </button>
       </div>
     </div>

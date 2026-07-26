@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shuffle } from "lucide-react";
+import { ShuffleIcon } from "@phosphor-icons/react";
 import type { ArtistGroup } from "../hooks/useLibraryGroups";
 import type { PlaylistActions, Track } from "../types";
 import { GridCard } from "../components/GridCard";
@@ -52,7 +52,7 @@ export function ArtistsTab({
           aria-label="Shuffle play all"
           title="Shuffle play all"
         >
-          <Shuffle size={16} />
+          <ShuffleIcon size={16} />
         </button>
       </div>
 

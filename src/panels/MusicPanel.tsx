@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { Captions, ListMusic, Pause, Play, Repeat, Repeat1, Shuffle, SkipBack, SkipForward } from "lucide-react";
+import {
+  ClosedCaptioningIcon,
+  QueueIcon,
+  PauseIcon,
+  PlayIcon,
+  RepeatIcon,
+  RepeatOnceIcon,
+  ShuffleIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from "@phosphor-icons/react";
 import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
 import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
@@ -228,10 +238,10 @@ export function MusicPanel({
             aria-label="Shuffle"
             title="Shuffle"
           >
-            <Shuffle size={ICON_SIZE} />
+            <ShuffleIcon size={ICON_SIZE} />
           </button>
           <button className="icon-button" onClick={onPrev} disabled={!currentTrack} aria-label="Previous">
-            <SkipBack size={ICON_SIZE} />
+            <SkipBackIcon size={ICON_SIZE} />
           </button>
           <button
             className="icon-button icon-button-play"
@@ -239,10 +249,10 @@ export function MusicPanel({
             disabled={!currentTrack}
             aria-label={snapshot && !snapshot.isPaused ? "Pause" : "Play"}
           >
-            {snapshot && !snapshot.isPaused ? <Pause size={ICON_SIZE} /> : <Play size={ICON_SIZE} />}
+            {snapshot && !snapshot.isPaused ? <PauseIcon size={ICON_SIZE} /> : <PlayIcon size={ICON_SIZE} />}
           </button>
           <button className="icon-button" onClick={onNext} disabled={!currentTrack} aria-label="Next">
-            <SkipForward size={ICON_SIZE} />
+            <SkipForwardIcon size={ICON_SIZE} />
           </button>
           <button
             className={`icon-button ${snapshot && snapshot.repeat !== "off" ? "icon-button-active" : ""}`}
@@ -250,7 +260,7 @@ export function MusicPanel({
             aria-label="Repeat"
             title={`Repeat: ${snapshot?.repeat ?? "off"}`}
           >
-            {snapshot?.repeat === "one" ? <Repeat1 size={ICON_SIZE} /> : <Repeat size={ICON_SIZE} />}
+            {snapshot?.repeat === "one" ? <RepeatOnceIcon size={ICON_SIZE} /> : <RepeatIcon size={ICON_SIZE} />}
           </button>
           <button
             className={`icon-button ${overlay === "queue" ? "icon-button-active" : ""}`}
@@ -258,7 +268,7 @@ export function MusicPanel({
             aria-label="Up next"
             title="Up next"
           >
-            <ListMusic size={ICON_SIZE} />
+            <QueueIcon size={ICON_SIZE} />
           </button>
           <button
             className={`icon-button ${overlay === "lyrics" ? "icon-button-active" : ""}`}
@@ -267,7 +277,7 @@ export function MusicPanel({
             aria-label="Lyrics"
             title="Lyrics"
           >
-            <Captions size={ICON_SIZE} />
+            <ClosedCaptioningIcon size={ICON_SIZE} />
           </button>
           <SleepTimerMenu
             remainingSecs={sleepTimerRemainingSecs}

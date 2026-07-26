@@ -1,37 +1,37 @@
 import {
-  Church,
-  Disc2,
-  Disc3,
-  Film,
-  Guitar,
-  Headphones,
-  MicVocal,
-  Music,
-  Music3,
-  PartyPopper,
-  Piano,
-} from "lucide-react";
+  ChurchIcon,
+  ConfettiIcon,
+  DiscIcon,
+  FilmSlateIcon,
+  GuitarIcon,
+  HeadphonesIcon,
+  MicrophoneStageIcon,
+  MusicNoteIcon,
+  MusicNotesSimpleIcon,
+  PianoKeysIcon,
+  VinylRecordIcon,
+} from "@phosphor-icons/react";
 
-type IconComponent = typeof Music;
+type IconComponent = typeof MusicNoteIcon;
 
 const GENRE_ICON_RULES: [RegExp, IconComponent][] = [
-  [/hip.?hop|rap/i, MicVocal],
-  [/r&?b|rnb|soul/i, MicVocal],
-  [/classical/i, Piano],
-  [/jazz/i, Piano],
-  [/rock|metal|blues/i, Guitar],
-  [/country|folk/i, Music3],
-  [/electronic|edm|dance|techno|house|trance/i, Disc3],
-  [/reggae/i, Disc2],
-  [/gospel|worship|christian/i, Church],
-  [/soundtrack|score|film/i, Film],
-  [/podcast|audiobook|spoken/i, Headphones],
-  [/party|pop/i, PartyPopper],
+  [/hip.?hop|rap/i, MicrophoneStageIcon],
+  [/r&?b|rnb|soul/i, MicrophoneStageIcon],
+  [/classical/i, PianoKeysIcon],
+  [/jazz/i, PianoKeysIcon],
+  [/rock|metal|blues/i, GuitarIcon],
+  [/country|folk/i, MusicNotesSimpleIcon],
+  [/electronic|edm|dance|techno|house|trance/i, DiscIcon],
+  [/reggae/i, VinylRecordIcon],
+  [/gospel|worship|christian/i, ChurchIcon],
+  [/soundtrack|score|film/i, FilmSlateIcon],
+  [/podcast|audiobook|spoken/i, HeadphonesIcon],
+  [/party|pop/i, ConfettiIcon],
 ];
 
 export function getGenreIcon(genre: string): IconComponent {
   for (const [pattern, icon] of GENRE_ICON_RULES) {
     if (pattern.test(genre)) return icon;
   }
-  return Music;
+  return MusicNoteIcon;
 }

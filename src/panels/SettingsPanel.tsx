@@ -2,7 +2,8 @@ import { RootChip } from "../components/RootChip";
 import { EqualizerPanel } from "./EqualizerPanel";
 
 const ACCENT_PRESETS = [
-  { name: "Amber", value: "#ff9f5b" },
+  { name: "Sunset", value: "#f7803c" },
+  { name: "Ember", value: "#f54828" },
   { name: "Teal", value: "#5eead4" },
   { name: "Violet", value: "#a78bfa" },
   { name: "Rose", value: "#fb7185" },

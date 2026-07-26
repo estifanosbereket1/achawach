@@ -1,4 +1,4 @@
-import { Moon } from "lucide-react";
+import { MoonIcon } from "@phosphor-icons/react";
 import { Dropdown } from "./Dropdown";
 
 const PRESETS = [
@@ -32,7 +32,7 @@ export function SleepTimerMenu({ remainingSecs, onStart, onCancel }: SleepTimerM
           aria-label="Sleep timer"
           title="Sleep timer"
         >
-          <Moon size={16} />
+          <MoonIcon size={16} />
         </button>
       }
     >
