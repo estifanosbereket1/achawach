@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
 import { GearIcon } from "@phosphor-icons/react";
@@ -23,6 +23,8 @@ function App() {
   const [expanded, setExpanded] = useState(false);
   const [panel, setPanel] = useState<PanelId>("music");
   const orbPosition = useRef<{ x: number; y: number } | null>(null);
+  const orbDragStart = useRef<{ x: number; y: number } | null>(null);
+  const orbDragging = useRef(false);
   const library = useMusicLibrary();
   const player = usePlayer(library.tracks);
   const settings = useSettings();
@@ -68,9 +70,55 @@ function App() {
     setExpanded(false);
   }
 
+  // The orb needs to be both draggable (to reposition it on screen) and
+  // clickable (to expand it), so we detect real pointer movement ourselves
+  // and only hand off to the native window drag once a small threshold is
+  // crossed — otherwise a plain click always reaches `expand()`.
+  useEffect(() => {
+    if (expanded) return;
+
+    function onMouseMove(e: MouseEvent) {
+      if (!orbDragStart.current || orbDragging.current) return;
+      const dx = e.clientX - orbDragStart.current.x;
+      const dy = e.clientY - orbDragStart.current.y;
+      if (Math.hypot(dx, dy) > 4) {
+        orbDragging.current = true;
+        getCurrentWindow().startDragging();
+      }
+    }
+
+    function onMouseUp() {
+      orbDragStart.current = null;
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [expanded]);
+
+  function handleOrbMouseDown(e: ReactMouseEvent) {
+    if (e.button !== 0) return;
+    orbDragStart.current = { x: e.clientX, y: e.clientY };
+  }
+
+  function handleOrbClick() {
+    if (orbDragging.current) {
+      orbDragging.current = false;
+      return;
+    }
+    expand();
+  }
+
   return (
-    <div className={expanded ? "dock" : "orb"} data-tauri-drag-region>
-      <div className="shell-inner" onClick={expanded ? undefined : expand}>
+    <div className={expanded ? "dock" : "orb"} data-tauri-drag-region={expanded ? "deep" : undefined}>
+      <div
+        className="shell-inner"
+        onMouseDown={expanded ? undefined : handleOrbMouseDown}
+        onClick={expanded ? undefined : handleOrbClick}
+      >
         {expanded ? (
           <div className="dock-content">
             <button className="collapse-btn" onClick={collapse}>
@@ -130,7 +178,7 @@ function App() {
             )}
           </div>
         ) : (
-          <div className="orb-dot" />
+          <img className="orb-dot" src="/achawatch.png" alt="achawatch" draggable={false} />
         )}
       </div>
     </div>
