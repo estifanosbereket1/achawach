@@ -2,7 +2,9 @@
 name = "achawatch"
 version = "0.1.0"
 description = "achawatch — a glassmorphic tray music player"
-authors = ["you"]
+authors = ["Estifanos <estifanosbereket297@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/estifanosbereket1/achawach"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

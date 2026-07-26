@@ -65,4 +65,4 @@ Linux) under `src-tauri/target/release/bundle/`.
 
 ## License
 
-TBD.
+MIT — see [LICENSE](LICENSE).
