@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { PlaylistActions, Track } from "../types";
+import type { PlaylistActions, Track, TrackActions } from "../types";
 import { useLibraryGroups, type ArtistGroup, type AlbumGroup } from "../hooks/useLibraryGroups";
 import { useMonthlyPlayCounts } from "../hooks/useMonthlyPlayCounts";
 import { GridCard } from "../components/GridCard";
@@ -28,7 +28,7 @@ const RECENTLY_ADDED_PREVIEW = 6;
 const TRACK_SECTION_PREVIEW = 6;
 const INSTANT_MIX_POOL_SIZE = 30;
 
-interface PlayNowTabProps extends PlaylistActions {
+interface PlayNowTabProps extends PlaylistActions, TrackActions {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -79,12 +79,16 @@ export function PlayNowTab({
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
+  onPlayNext,
+  onQueue,
+  onAddToFavorites,
 }: PlayNowTabProps) {
   const groups = useLibraryGroups(tracks);
   const monthlyPlayCounts = useMonthlyPlayCounts();
   const [view, setView] = useState<PlayNowView>({ type: "dashboard" });
   const [instantMixPool] = useState<Track[]>(() => shuffleArray(tracks).slice(0, INSTANT_MIX_POOL_SIZE));
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
+  const trackActionsProps: TrackActions = { onPlayNext, onQueue, onAddToFavorites };
 
   const popularArtists = useMemo(
     () => [...groups.artists].sort((a, b) => b.totalPlayCount - a.totalPlayCount),
@@ -147,6 +151,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -162,6 +167,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -216,6 +222,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -229,6 +236,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -242,6 +250,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -255,6 +264,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }
@@ -268,6 +278,7 @@ export function PlayNowTab({
         onBack={goToDashboard}
         onPlayList={onPlayList}
         {...playlistProps}
+        {...trackActionsProps}
       />
     );
   }

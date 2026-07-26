@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ShuffleIcon } from "@phosphor-icons/react";
 import type { ArtistGroup } from "../hooks/useLibraryGroups";
-import type { PlaylistActions, Track } from "../types";
+import type { PlaylistActions, Track, TrackActions } from "../types";
 import { GridCard } from "../components/GridCard";
 import { TrackListDetail } from "../components/TrackListDetail";
 import { shuffleArray } from "../utils";
 
-interface ArtistsTabProps extends PlaylistActions {
+interface ArtistsTabProps extends PlaylistActions, TrackActions {
   artists: ArtistGroup[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -19,6 +19,9 @@ export function ArtistsTab({
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
+  onPlayNext,
+  onQueue,
+  onAddToFavorites,
 }: ArtistsTabProps) {
   const [selected, setSelected] = useState<ArtistGroup | null>(null);
   const allTracks = artists.flatMap((a) => a.tracks);
@@ -35,6 +38,9 @@ export function ArtistsTab({
         playlists={playlists}
         onAddToPlaylist={onAddToPlaylist}
         onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+        onPlayNext={onPlayNext}
+        onQueue={onQueue}
+        onAddToFavorites={onAddToFavorites}
       />
     );
   }

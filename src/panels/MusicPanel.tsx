@@ -10,10 +10,11 @@ import {
   SkipBackIcon,
   SkipForwardIcon,
 } from "@phosphor-icons/react";
-import type { PlayerSnapshot, PlaylistActions, Track } from "../types";
+import type { PlayerSnapshot, PlaylistActions, Track, TrackActions } from "../types";
 import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { useLyrics } from "../hooks/useLyrics";
+import { useTrackActions } from "../hooks/useTrackActions";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
 import { QueueView } from "../components/QueueView";
@@ -96,6 +97,16 @@ export function MusicPanel({
   const [overlay, setOverlay] = useState<"none" | "queue" | "lyrics">("none");
   const groups = useLibraryGroups(tracks);
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
+  const trackActionsProps: TrackActions = useTrackActions({
+    tracks,
+    snapshot,
+    playlists,
+    onPlayList,
+    onReorderQueue,
+    getPlaylistTracks,
+    setPlaylistTracks,
+    onCreatePlaylist,
+  });
 
   function selectTab(tab: LibraryTab) {
     setOverlay("none");
@@ -147,6 +158,7 @@ export function MusicPanel({
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
             {...playlistProps}
+            {...trackActionsProps}
           />
         )}
         {activeTab === "tracks" && (
@@ -155,6 +167,7 @@ export function MusicPanel({
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
             {...playlistProps}
+            {...trackActionsProps}
           />
         )}
         {activeTab === "artists" && (
@@ -163,6 +176,7 @@ export function MusicPanel({
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
             {...playlistProps}
+            {...trackActionsProps}
           />
         )}
         {activeTab === "albums" && (
@@ -171,6 +185,7 @@ export function MusicPanel({
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
             {...playlistProps}
+            {...trackActionsProps}
           />
         )}
         {activeTab === "genres" && (
@@ -179,6 +194,7 @@ export function MusicPanel({
             currentTrackId={snapshot?.currentTrackId ?? null}
             onPlayList={onPlayList}
             {...playlistProps}
+            {...trackActionsProps}
           />
         )}
         {activeTab === "playlists" && (

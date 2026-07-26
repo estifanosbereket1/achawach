@@ -25,6 +25,12 @@ export interface PlaylistActions {
   onCreatePlaylistWithTrack: (name: string, track: Track) => void;
 }
 
+export interface TrackActions {
+  onPlayNext: (trackIds: string[]) => void;
+  onQueue: (trackIds: string[]) => void;
+  onAddToFavorites: (trackIds: string[]) => void;
+}
+
 export type RepeatMode = "off" | "all" | "one";
 
 export interface PlayerSnapshot {

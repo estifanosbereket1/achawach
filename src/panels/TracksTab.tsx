@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { ShuffleIcon } from "@phosphor-icons/react";
-import type { PlaylistActions, Track } from "../types";
+import type { PlaylistActions, Track, TrackActions } from "../types";
 import { TrackRows } from "../components/TrackRows";
 import { shuffleArray } from "../utils";
 
 type SortField = "title" | "artist" | "album" | "duration";
 const SORT_FIELDS: SortField[] = ["title", "artist", "album", "duration"];
 
-interface TracksTabProps extends PlaylistActions {
+interface TracksTabProps extends PlaylistActions, TrackActions {
   tracks: Track[];
   currentTrackId: string | null;
   onPlayList: (list: Track[], index: number) => void;
@@ -20,6 +20,9 @@ export function TracksTab({
   playlists,
   onAddToPlaylist,
   onCreatePlaylistWithTrack,
+  onPlayNext,
+  onQueue,
+  onAddToFavorites,
 }: TracksTabProps) {
   const [query, setQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("title");
@@ -109,6 +112,9 @@ export function TracksTab({
           playlists={playlists}
           onAddToPlaylist={onAddToPlaylist}
           onCreatePlaylistWithTrack={onCreatePlaylistWithTrack}
+          onPlayNext={onPlayNext}
+          onQueue={onQueue}
+          onAddToFavorites={onAddToFavorites}
         />
       )}
     </div>
