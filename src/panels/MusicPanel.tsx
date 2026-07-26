@@ -15,6 +15,7 @@ import type { ImportResult } from "../hooks/usePlaylists";
 import { useLibraryGroups } from "../hooks/useLibraryGroups";
 import { useLyrics } from "../hooks/useLyrics";
 import { useTrackActions } from "../hooks/useTrackActions";
+import { usePinnedAlbums } from "../hooks/usePinnedAlbums";
 import { Thumbnail } from "../components/Thumbnail";
 import { AddToPlaylistMenu } from "../components/AddToPlaylistMenu";
 import { QueueView } from "../components/QueueView";
@@ -97,6 +98,7 @@ export function MusicPanel({
   const [overlay, setOverlay] = useState<"none" | "queue" | "lyrics">("none");
   const [pendingNav, setPendingNav] = useState<{ tab: "albums" | "artists"; key: string } | null>(null);
   const groups = useLibraryGroups(tracks);
+  const pinnedAlbums = usePinnedAlbums();
   const playlistProps: PlaylistActions = { playlists, onAddToPlaylist, onCreatePlaylistWithTrack };
   const trackActionsProps: TrackActions = useTrackActions({
     tracks,
@@ -208,6 +210,8 @@ export function MusicPanel({
             {...trackNavProps}
             navigateToKey={pendingNav?.tab === "albums" ? pendingNav.key : undefined}
             onConsumeNavigate={() => setPendingNav(null)}
+            isAlbumPinned={pinnedAlbums.isPinned}
+            onTogglePin={pinnedAlbums.togglePin}
           />
         )}
         {activeTab === "genres" && (

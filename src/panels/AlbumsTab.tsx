@@ -12,6 +12,8 @@ interface AlbumsTabProps extends PlaylistActions, TrackActions, TrackNavigation 
   onPlayList: (list: Track[], index: number) => void;
   navigateToKey?: string;
   onConsumeNavigate: () => void;
+  isAlbumPinned: (key: string) => boolean;
+  onTogglePin: (key: string) => void;
 }
 
 export function AlbumsTab({
@@ -28,6 +30,8 @@ export function AlbumsTab({
   onNavigateToArtist,
   navigateToKey,
   onConsumeNavigate,
+  isAlbumPinned,
+  onTogglePin,
 }: AlbumsTabProps) {
   const [selected, setSelected] = useState<AlbumGroup | null>(null);
   const allTracks = albums.flatMap((a) => a.tracks);
@@ -82,15 +86,26 @@ export function AlbumsTab({
         <p className="track-list-empty">No albums yet.</p>
       ) : (
         <div className="grid-view">
-          {albums.map((album) => (
-            <GridCard
-              key={`${album.name} ${album.artist}`}
-              title={album.name}
-              subtitle={album.artist}
-              artworkPath={album.artworkPath}
-              onClick={() => setSelected(album)}
-            />
-          ))}
+          {albums.map((album) => {
+            const key = `${album.name} ${album.artist}`;
+            const trackIds = album.tracks.map((t) => t.id);
+            return (
+              <GridCard
+                key={key}
+                title={album.name}
+                subtitle={album.artist}
+                artworkPath={album.artworkPath}
+                onClick={() => setSelected(album)}
+                contextMenuItems={[
+                  { label: "Play Now", onSelect: () => onPlayList(album.tracks, 0) },
+                  { label: "Play Next", onSelect: () => onPlayNext(trackIds) },
+                  { label: "Queue", onSelect: () => onQueue(trackIds) },
+                  { label: "Add to Favs", onSelect: () => onAddToFavorites(trackIds) },
+                  { label: isAlbumPinned(key) ? "Unpin" : "Pin", onSelect: () => onTogglePin(key) },
+                ]}
+              />
+            );
+          })}
         </div>
       )}
     </div>
