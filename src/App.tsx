@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
-import { GearIcon } from "@phosphor-icons/react";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { GearIcon, PauseIcon, PlayIcon } from "@phosphor-icons/react";
 import { useMusicLibrary } from "./hooks/useMusicLibrary";
 import { usePlayer } from "./hooks/usePlayer";
 import { useSettings } from "./hooks/useSettings";
@@ -39,6 +40,7 @@ function App() {
     }
   });
   const showOnboarding = onboarding.isLoaded && !onboarding.completed;
+  const currentTrack = library.tracks.find((t) => t.id === player.snapshot?.currentTrackId) ?? null;
 
   useEffect(() => {
     if (settings.isLoaded) {
@@ -123,8 +125,17 @@ function App() {
     expand();
   }
 
+  function handleOrbBadgeClick(e: ReactMouseEvent) {
+    e.stopPropagation();
+    if (orbDragging.current) {
+      orbDragging.current = false;
+      return;
+    }
+    player.togglePlayPause();
+  }
+
   return (
-    <div className={expanded ? "dock" : "orb"} data-tauri-drag-region={expanded ? "deep" : undefined}>
+    <div className={expanded ? "dock" : "orb"}>
       <div
         className="shell-inner"
         onMouseDown={expanded ? undefined : handleOrbMouseDown}
@@ -132,6 +143,10 @@ function App() {
       >
         {expanded ? (
           <div className="dock-content">
+            {/* Only bare (non-"deep") data-tauri-drag-region, and no children of its own,
+                so this exact element must be the click target — it can never swallow
+                clicks on the tab row, buttons, or track rows below it. */}
+            <div className="dock-drag-handle" data-tauri-drag-region />
             <button className="collapse-btn" onClick={collapse}>
               ×
             </button>
@@ -196,6 +211,27 @@ function App() {
                 onSetEqGains={equalizer.setGains}
               />
             )}
+          </div>
+        ) : currentTrack ? (
+          <div className="orb-now-playing" title={`${currentTrack.title} — ${currentTrack.artist}`}>
+            {currentTrack.artworkPath ? (
+              <img
+                className="orb-artwork"
+                src={convertFileSrc(currentTrack.artworkPath)}
+                alt={currentTrack.album}
+                draggable={false}
+              />
+            ) : (
+              <img className="orb-dot orb-artwork-fallback" src="/achawatch.png" alt="achawatch" draggable={false} />
+            )}
+            <button
+              className="orb-status-badge"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={handleOrbBadgeClick}
+              aria-label={player.snapshot && !player.snapshot.isPaused ? "Pause" : "Play"}
+            >
+              {player.snapshot && !player.snapshot.isPaused ? <PauseIcon size={10} /> : <PlayIcon size={10} />}
+            </button>
           </div>
         ) : (
           <img className="orb-dot" src="/achawatch.png" alt="achawatch" draggable={false} />
