@@ -10,6 +10,7 @@ import { usePlaylists } from "./hooks/usePlaylists";
 import { useEqualizer } from "./hooks/useEqualizer";
 import { useSleepTimer } from "./hooks/useSleepTimer";
 import { useOnboarding } from "./hooks/useOnboarding";
+import { useUninstall } from "./hooks/useUninstall";
 import { MusicPanel } from "./panels/MusicPanel";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import { OnboardingWizard } from "./components/OnboardingWizard";
@@ -34,6 +35,7 @@ function App() {
   const playlists = usePlaylists();
   const equalizer = useEqualizer();
   const onboarding = useOnboarding();
+  const uninstall = useUninstall();
   const sleepTimer = useSleepTimer(() => {
     if (player.snapshot && !player.snapshot.isPaused) {
       player.togglePlayPause();
@@ -209,6 +211,10 @@ function App() {
                 eqGains={equalizer.gains}
                 onSetEqBand={equalizer.setBand}
                 onSetEqGains={equalizer.setGains}
+                isUninstallable={uninstall.isAvailable}
+                isUninstalling={uninstall.isUninstalling}
+                uninstallError={uninstall.error}
+                onUninstall={uninstall.uninstall}
               />
             )}
           </div>

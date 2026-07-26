@@ -514,6 +514,27 @@ input[type="range"] {
   opacity: 0.9;
 }
 
+.pill-button-danger {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--danger);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pill-button-danger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pill-button-danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--surface);
+}
+
 .onboarding {
   height: 100%;
   display: flex;

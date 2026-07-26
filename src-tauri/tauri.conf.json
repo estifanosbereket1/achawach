@@ -50,7 +50,7 @@
     "linux": {
       "deb": {
         "section": "sound",
-        "depends": ["libasound2t64 | libasound2"]
+        "depends": ["libasound2t64 | libasound2", "pkexec | policykit-1"]
       }
     }
   }

@@ -7,6 +7,7 @@ mod notifications;
 mod player;
 mod playlists;
 mod stats;
+mod uninstall;
 mod watcher;
 
 use tauri::menu::MenuBuilder;
@@ -94,6 +95,8 @@ pub fn run() {
             notifications::send_notification,
             watcher::set_watched_roots,
             lyrics::get_lyrics,
+            uninstall::is_installed_package,
+            uninstall::uninstall_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

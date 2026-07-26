@@ -1,5 +1,6 @@
 import { RootChip } from "../components/RootChip";
 import { EqualizerPanel } from "./EqualizerPanel";
+import { confirmUnless } from "../utils";
 
 const ACCENT_PRESETS = [
   { name: "Sunset", value: "#f7803c" },
@@ -23,6 +24,10 @@ interface SettingsPanelProps {
   eqGains: number[];
   onSetEqBand: (index: number, value: number) => void;
   onSetEqGains: (gains: number[]) => void;
+  isUninstallable: boolean;
+  isUninstalling: boolean;
+  uninstallError: string | null;
+  onUninstall: () => void;
 }
 
 export function SettingsPanel({
@@ -38,7 +43,20 @@ export function SettingsPanel({
   eqGains,
   onSetEqBand,
   onSetEqGains,
+  isUninstallable,
+  isUninstalling,
+  uninstallError,
+  onUninstall,
 }: SettingsPanelProps) {
+  async function handleUninstallClick() {
+    const confirmed = await confirmUnless(
+      false,
+      "Uninstall achawatch? This removes the app from your computer — your music library and settings are kept.",
+      { title: "Uninstall achawatch", kind: "warning" },
+    );
+    if (confirmed) onUninstall();
+  }
+
   return (
     <div className="settings-panel">
       <h3 className="settings-heading">Music Folders</h3>
@@ -80,6 +98,16 @@ export function SettingsPanel({
 
       <h3 className="settings-heading">Equalizer</h3>
       <EqualizerPanel gains={eqGains} onSetBand={onSetEqBand} onSetGains={onSetEqGains} />
+
+      {isUninstallable && (
+        <>
+          <h3 className="settings-heading">Uninstall</h3>
+          {uninstallError && <div className="dropdown-empty">{uninstallError}</div>}
+          <button className="pill-button pill-button-danger" disabled={isUninstalling} onClick={handleUninstallClick}>
+            {isUninstalling ? "Uninstalling…" : "Uninstall achawatch"}
+          </button>
+        </>
+      )}
     </div>
   );
 }
