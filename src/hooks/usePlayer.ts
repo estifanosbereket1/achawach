@@ -62,7 +62,7 @@ export function usePlayer(tracks: Track[]) {
   useEffect(() => {
     const interval = setInterval(async () => {
       const current = snapshotRef.current;
-      if (!current || current.currentTrackId === null || current.isPaused) return;
+      if (!current || current.currentTrackId === null) return;
       try {
         const next = await invoke<PlayerSnapshot>("get_position");
         const track = tracksRef.current.find((t) => t.id === next.currentTrackId);

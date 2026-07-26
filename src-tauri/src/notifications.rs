@@ -11,7 +11,7 @@ use notify_rust::Notification;
 #[tauri::command]
 pub fn send_notification(title: String, body: String, icon_path: Option<String>) -> Result<(), String> {
     let mut notification = Notification::new();
-    notification.summary(&title).body(&body);
+    notification.summary(&title).body(&body).icon("achawatch");
     if let Some(path) = &icon_path {
         notification.image_path(path);
     }
