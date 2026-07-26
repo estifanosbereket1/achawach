@@ -130,7 +130,7 @@ impl RootInterface for MprisPlayer {
     }
 
     async fn desktop_entry(&self) -> fdo::Result<String> {
-        Ok("com.achawatch.app".to_string())
+        Ok("achawatch".to_string())
     }
 
     async fn supported_uri_schemes(&self) -> fdo::Result<Vec<String>> {
