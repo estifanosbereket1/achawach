@@ -441,6 +441,133 @@ input[type="range"] {
   border-color: var(--accent);
 }
 
+.pill-button-primary {
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pill-button-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pill-button-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.onboarding {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 36px;
+}
+
+.onboarding-step-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.onboarding-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--glass-border);
+}
+
+.onboarding-dot-active {
+  background: var(--accent);
+}
+
+.onboarding-body {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  overflow-y: auto;
+  padding: 8px 16px 24px;
+  text-align: center;
+}
+
+.onboarding-hero-icon {
+  color: var(--accent);
+}
+
+.onboarding-hero-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.onboarding-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.onboarding-subtitle {
+  opacity: 0.7;
+  font-size: 13px;
+  margin: 0;
+  max-width: 380px;
+}
+
+.onboarding-feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.onboarding-feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  color: var(--icon-idle);
+  font-size: 12px;
+  text-align: left;
+}
+
+.onboarding-root-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.onboarding-tips {
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.85;
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.onboarding-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .icon-button {
   width: 32px;
   height: 32px;

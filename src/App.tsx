@@ -8,8 +8,10 @@ import { useSettings } from "./hooks/useSettings";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { useEqualizer } from "./hooks/useEqualizer";
 import { useSleepTimer } from "./hooks/useSleepTimer";
+import { useOnboarding } from "./hooks/useOnboarding";
 import { MusicPanel } from "./panels/MusicPanel";
 import { SettingsPanel } from "./panels/SettingsPanel";
+import { OnboardingWizard } from "./components/OnboardingWizard";
 import "./App.css";
 
 const ORB_SIZE = 64;
@@ -30,11 +32,13 @@ function App() {
   const settings = useSettings();
   const playlists = usePlaylists();
   const equalizer = useEqualizer();
+  const onboarding = useOnboarding();
   const sleepTimer = useSleepTimer(() => {
     if (player.snapshot && !player.snapshot.isPaused) {
       player.togglePlayPause();
     }
   });
+  const showOnboarding = onboarding.isLoaded && !onboarding.completed;
 
   useEffect(() => {
     if (settings.isLoaded) {
@@ -42,6 +46,13 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.isLoaded]);
+
+  useEffect(() => {
+    if (showOnboarding && !expanded) {
+      expand();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showOnboarding]);
 
   function handleVolumeChange(volume: number) {
     player.setVolume(volume);
@@ -124,15 +135,24 @@ function App() {
             <button className="collapse-btn" onClick={collapse}>
               ×
             </button>
-            <button
-              className="settings-toggle-btn"
-              onClick={() => setPanel(panel === "music" ? "settings" : "music")}
-              aria-label="Settings"
-            >
-              <GearIcon size={16} />
-            </button>
+            {!showOnboarding && (
+              <button
+                className="settings-toggle-btn"
+                onClick={() => setPanel(panel === "music" ? "settings" : "music")}
+                aria-label="Settings"
+              >
+                <GearIcon size={16} />
+              </button>
+            )}
 
-            {panel === "music" ? (
+            {showOnboarding ? (
+              <OnboardingWizard
+                roots={library.roots}
+                isScanning={library.isScanning}
+                onAddRoots={library.addRoots}
+                onFinish={onboarding.finish}
+              />
+            ) : panel === "music" ? (
               <MusicPanel
                 tracks={library.tracks}
                 snapshot={player.snapshot}
