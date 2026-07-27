@@ -34,9 +34,15 @@ pub fn set_watched_roots(
     *guard = None;
 
     let app_for_events = app.clone();
+    // `Access` events (file opened/read/closed, no content change) are excluded here:
+    // the Linux backend watches `OPEN` by default, so simply *playing* a track inside a
+    // watched folder was generating a steady stream of these and triggering a full
+    // rescan every couple of seconds, purely from the player reading the file it's
+    // already streaming — not an actual library change.
     let mut debouncer = new_debouncer(Duration::from_secs(DEBOUNCE_SECS), None, move |result: DebounceEventResult| {
         if let Ok(events) = result {
-            if !events.is_empty() {
+            let has_relevant_change = events.iter().any(|e| !e.kind.is_access());
+            if has_relevant_change {
                 let _ = app_for_events.emit("library-changed", ());
             }
         }

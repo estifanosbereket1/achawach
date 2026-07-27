@@ -18,23 +18,45 @@ pub fn is_installed_package() -> bool {
 /// Removes the installed package via a `pkexec`-elevated `apt-get remove`,
 /// prompting the user's own native authentication dialog (there is no way to
 /// remove system-installed files without it). Quits the app on success;
-/// on failure (e.g. the user cancels the prompt) returns an error instead so
-/// the UI can show it, and the app keeps running.
+/// on failure (e.g. the user cancels the prompt, or apt fails for its own
+/// reasons such as a held dpkg lock) returns the actual apt error text so the
+/// UI can show it, and the app keeps running.
+///
+/// `DPkg::Lock::Timeout=30` is set defensively: Ubuntu desktops routinely
+/// have packagekit/unattended-upgrades briefly holding the dpkg lock in the
+/// background, which otherwise makes a plain `apt-get remove` fail instantly
+/// with a lock error instead of just waiting a moment.
 #[tauri::command]
 pub async fn uninstall_app(app: AppHandle) -> Result<(), String> {
-    let status = tauri::async_runtime::spawn_blocking(|| {
+    let output = tauri::async_runtime::spawn_blocking(|| {
         Command::new("pkexec")
-            .args(["apt-get", "remove", "-y", PACKAGE_NAME])
-            .status()
+            .args([
+                "apt-get",
+                "remove",
+                "-y",
+                "-o",
+                "DPkg::Lock::Timeout=30",
+                PACKAGE_NAME,
+            ])
+            .output()
     })
     .await
     .map_err(|e| e.to_string())?
     .map_err(|e| e.to_string())?;
 
-    if status.success() {
+    if output.status.success() {
         app.exit(0);
         Ok(())
     } else {
-        Err("Uninstall was cancelled or failed.".to_string())
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let detail = if !stderr.trim().is_empty() {
+            stderr.trim().to_string()
+        } else if !stdout.trim().is_empty() {
+            stdout.trim().to_string()
+        } else {
+            format!("apt-get exited with {:?}", output.status.code())
+        };
+        Err(format!("Uninstall failed: {detail}"))
     }
 }
