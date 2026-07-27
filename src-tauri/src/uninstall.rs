@@ -44,6 +44,16 @@ pub async fn uninstall_app(app: AppHandle) -> Result<(), String> {
     .map_err(|e| e.to_string())?
     .map_err(|e| e.to_string())?;
 
+    // apt-get's own exit code can be poisoned by an unrelated package's trigger
+    // processing failing in the same transaction (e.g. a broken DKMS kernel
+    // module rebuild) even when achawatch itself was removed successfully —
+    // so check directly whether the package is actually gone rather than
+    // trusting the aggregate exit status alone.
+    if !is_installed_package() {
+        app.exit(0);
+        return Ok(());
+    }
+
     if output.status.success() {
         app.exit(0);
         Ok(())
